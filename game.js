@@ -7,6 +7,7 @@ class Game {
 
     start() {
         setInterval(() => {
+            
             this.state = this.generateRandomGameState();
 
             for(let socketId in this.clientSockets) {
@@ -16,28 +17,15 @@ class Game {
                     gameState: this.state
                 });        
             }
-        }, 1000);
+        }, 50);
     }
 
     generateRandomGameState() {
         
         let board = {
-            numRows: 10,
-            numCols: 15,
-            spaces: []
+            numRows: 3,
+            numCols: 3
         };
-
-        board.spaces = new Array(board.numRows);
-        for(let i = 0; i < board.numRows; i++) {
-            board.spaces[i] = new Array(board.numCols);
-        }
-
-        for(let i = 0; i < board.numRows; i++) {
-            for(let j = 0; j < board.numCols; j++) {        
-                let r = this.getRandomInteger(1, 20);
-                board.spaces[i][j] = r;
-            }
-        }
 
         let gameState = {
             board
@@ -46,13 +34,6 @@ class Game {
         return gameState;
     }
 
-    getRandomInteger(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
 }
 
 module.exports = Game;
-

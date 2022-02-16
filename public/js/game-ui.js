@@ -1,5 +1,8 @@
 const socket = io();
+
 let turn = 0;
+let clicked = false;
+let coords = [];
 
 socket.on('gameState', (data) => {
     updateUI(data.gameState);
@@ -10,105 +13,59 @@ function updateUI(gameState) {
     updateBoard(board);            
 }
 
+document.addEventListener('mousemove', boardIsClicked);
+
+function boardIsClicked(event) {
+    coords = [event.clientX, event.clientY];
+    clicked = true;
+}
+
 function updateBoard(board) {
 
-    let logs = {
-        "purple": [0, []],
-        "orange": [0, []],
-        "yellow": [0, []],
-        "green" : [0, []]
-    }
+    const clickedHTML = document.getElementById("clicked");
+    clickedHTML.innerHTML = `clicked = ${clicked}`;
 
-    // turn counter
+    if (clicked) {
 
-    const turnCounter = document.getElementById("turn");
-    turnCounter.innerHTML = `turn: ${turn}`;
-    turn++;
+        // turn counter
 
-    // board
+        const turnCounter = document.getElementById("turn");
+        turnCounter.innerHTML = `turn: player ${(turn % 2) + 1}`;
+        turn++;
 
-    let boardTable = document.getElementById('board');
+        // coords
 
-    // if board is empty, fill board with empty cells
+        const coordsHTML = document.getElementById("coords");
+        coordsHTML.innerHTML = `coords: ${coords}`;
 
-    if (boardTable.rows.length == 0) {
+        clicked = false;
 
-        for(let i = 0; i < board.numRows; i++) {
-            let row = boardTable.insertRow();
+        // board
 
-            for(let j = 0; j < board.numCols; j++) {
+        // let boardTable = document.getElementById('board');
 
-                let cell = row.insertCell();
-                cell.className = 'boardSpace';
-                cell.innerHTML = '';
-                cell.style.backgroundColor = 'gray';
+        // if (boardTable.rows.length == 0) {
 
-            }
-        }
+        //     for(let i = 0; i < board.numRows; i++) {
+        //         let row = boardTable.insertRow();
 
-    } else { // if board is not empty, update board
+        //         for(let j = 0; j < board.numCols; j++) {
 
-        for(let i = 0; i < board.numRows; i++) {
-            let row = boardTable.rows[i];
+        //             let cell = row.insertCell();
+        //             cell.className = 'boardSpace';
+        //             cell.innerHTML = '';
+        //             cell.style.backgroundColor = 'gray';
 
-            for(let j = 0; j < board.numCols; j++) {
+        //         }
+        //     }
 
-                let cell = row.cells[j];
-                cell.innerHTML = '';
-                
-                let spaceValue = board.spaces[i][j];
-                let updateLogs = false;
+        // } // else {
 
-                if ((i < 2 || i >= board.numRows - 2) && (j < 2 || j >= board.numCols - 2)) {
+        //     // mouse stuff
+        //     boardTable.rows[0].cells[0].innerHTML = `x: ${x}, y: ${y}`;
 
-                    cell.style.backgroundColor = 'black';
-
-                } else if (spaceValue === 1) {
-
-                    cell.style.backgroundColor = 'orange';
-                    cell.innerHTML = 'O';
-                    updateLogs = true;
-
-                } else if (spaceValue === 2)  {
-
-                    cell.style.backgroundColor = 'purple';
-                    cell.innerHTML = 'P';
-                    updateLogs = true;
-
-                } else if (spaceValue === 3)  {
-
-                    cell.style.backgroundColor = 'yellow';
-                    cell.innerHTML = 'Y';
-                    updateLogs = true;
-
-                } else if (spaceValue === 4)  {
-
-                    cell.style.backgroundColor = 'green';
-                    cell.innerHTML = 'G';
-                    updateLogs = true;
-
-                } else {
-
-                    cell.style.backgroundColor = 'gray';
-                }
-
-                if (updateLogs) {
-                    logs[cell.style.backgroundColor][0]++;
-                    logs[cell.style.backgroundColor][1].push(` (${j}, ${i})`);
-                }
-
-            }
-        }
-
-    }
-
-    // logs
-
-    const logsHTML = document.getElementById("logs");
-    logsHTML.innerHTML = '';
-
-    for (const color in logs) {
-        logsHTML.innerHTML += `${logs[color][0]} ${color} boxes: ${logs[color][1]} <br>`;
+        // }
+    
     }
 
 }

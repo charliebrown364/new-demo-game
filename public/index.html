@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Demo Game</title>
+        <title>Tic Tac Toe</title>
 
         <link rel="stylesheet" href="/css/game-ui.css">
         <script src="/socket.io/socket.io.js"></script>
@@ -10,10 +10,12 @@
     </head>
    <body>
 
-        <h1 id="title">Charlie's Demo Game</h1>
-        <div id="turn">turn: 0</div>
-        <table id="board"></table>
-        <div id="logs"></div>
+        <h1 id="title">Tic Tac Toe</h1>
+        <div id="turn"></div>
+        <div id="coords"></div>
+        <div id="clicked"></div>        
+
+        <!-- <table id="board" onclick="boardIsClicked(event)"></table> -->
 
    </body>
 </html>
