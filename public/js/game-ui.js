@@ -13,17 +13,29 @@ function updateUI(gameState) {
     updateBoard(board);            
 }
 
-document.addEventListener('mousemove', boardIsClicked);
-
-function boardIsClicked(event) {
-    coords = [event.clientX, event.clientY];
+document.addEventListener('click', (e) => {
+    coords = [e.x, e.y];
     clicked = true;
-}
+});
 
 function updateBoard(board) {
 
-    const clickedHTML = document.getElementById("clicked");
-    clickedHTML.innerHTML = `clicked = ${clicked}`;
+    if (boardTable.rows.length == 0) {
+
+        for(let i = 0; i < board.numRows; i++) {
+            let row = boardTable.insertRow();
+
+            for(let j = 0; j < board.numCols; j++) {
+
+                let cell = row.insertCell();
+                cell.className = 'boardSpace';
+                cell.innerHTML = '';
+                cell.style.backgroundColor = 'gray';
+
+            }
+        }
+
+    }
 
     if (clicked) {
 
@@ -40,31 +52,11 @@ function updateBoard(board) {
 
         clicked = false;
 
-        // board
+        board
 
-        // let boardTable = document.getElementById('board');
+        let boardTable = document.getElementById('board');
 
-        // if (boardTable.rows.length == 0) {
-
-        //     for(let i = 0; i < board.numRows; i++) {
-        //         let row = boardTable.insertRow();
-
-        //         for(let j = 0; j < board.numCols; j++) {
-
-        //             let cell = row.insertCell();
-        //             cell.className = 'boardSpace';
-        //             cell.innerHTML = '';
-        //             cell.style.backgroundColor = 'gray';
-
-        //         }
-        //     }
-
-        // } // else {
-
-        //     // mouse stuff
-        //     boardTable.rows[0].cells[0].innerHTML = `x: ${x}, y: ${y}`;
-
-        // }
+        // mouse stuff
     
     }
 
