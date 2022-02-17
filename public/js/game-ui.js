@@ -20,6 +20,8 @@ document.addEventListener('click', (e) => {
 
 function updateBoard(board) {
 
+    const boardTable = document.getElementById("board");
+
     if (boardTable.rows.length == 0) {
 
         for(let i = 0; i < board.numRows; i++) {
@@ -28,7 +30,7 @@ function updateBoard(board) {
             for(let j = 0; j < board.numCols; j++) {
 
                 let cell = row.insertCell();
-                cell.className = 'boardSpace';
+                cell.className = 'tile';
                 cell.innerHTML = '';
                 cell.style.backgroundColor = 'gray';
 
