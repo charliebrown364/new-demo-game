@@ -1,19 +1,14 @@
 const socket = io();
 
+socket.on('update game', () => {
+    updateUI();
+});
+
 let turn = 'X';
 let clicked = false;
 let mouseX = null;
 let mouseY = null;
 let winner = null;
-
-socket.on('gameState', (data) => {
-    updateUI(data.gameState);
-});
-
-function updateUI(gameState) {
-    let board = gameState.board;
-    updateBoard(board);            
-}
 
 document.addEventListener('click', (e) => {
     mouseX = e.x
@@ -21,20 +16,20 @@ document.addEventListener('click', (e) => {
     clicked = true;
 });
 
-function updateBoard(board) {
+function updateUI() {
 
-    const boardTable  = document.getElementById("board");
-    const turnCounter = document.getElementById("turn");
-    const statusHTML  = document.getElementById("status");
+    const boardHTML  = document.getElementById("board");
+    const turnHTML   = document.getElementById("turn");
+    const statusHTML = document.getElementById("status");
 
     // make board
 
-    if (boardTable.rows.length === 0) {
+    if (boardHTML.rows.length === 0) {
 
-        for(let i = 0; i < board.numRows; i++) {
-            let row = boardTable.insertRow();
+        for(let i = 0; i < 3; i++) {
+            let row = boardHTML.insertRow();
 
-            for(let j = 0; j < board.numCols; j++) {
+            for(let j = 0; j < 3; j++) {
 
                 let cell = row.insertCell();
                 cell.className = 'tile';
@@ -48,14 +43,14 @@ function updateBoard(board) {
 
     // game
 
-    if (clicked && winner !== null) {
+    if (clicked && (winner === null)) {
 
         clicked = false;
 
         // board
 
-        tileCoords = getTile(boardTable);
-        tile = boardTable.rows[tileCoords[1]].cells[tileCoords[0]];
+        tileCoords = getTile(boardHTML);
+        tile = boardHTML.rows[tileCoords[1]].cells[tileCoords[0]];
         
         if (tile.innerHTML === '') {
             tile.innerHTML = turn;
@@ -67,11 +62,11 @@ function updateBoard(board) {
 
         // winner
 
-        checkForWinner(boardTable);
+        checkForWinner(boardHTML);
 
         if (winner === null) {
             changeTurn();
-            turnCounter.innerHTML = `turn: ${turn}`;
+            turnHTML.innerHTML = `turn: ${turn}`;
         } else {
             statusHTML.innerHTML = `winner! ${turn}`;
         }
@@ -80,13 +75,13 @@ function updateBoard(board) {
 
 }
 
-function getTile(boardTable) {
+function getTile(boardHTML) {
     
-    let boardTablePos = boardTable.getBoundingClientRect();
-    let cellPos = boardTable.rows[0].cells[0].getBoundingClientRect();
+    let boardHTMLPos = boardHTML.getBoundingClientRect();
+    let cellPos = boardHTML.rows[0].cells[0].getBoundingClientRect();
 
-    let boardX = boardTablePos.x;
-    let boardY = boardTablePos.y;
+    let boardX = boardHTMLPos.x;
+    let boardY = boardHTMLPos.y;
 
     let cellWidth = cellPos.width;
     let cellHeight = cellPos.height;
@@ -122,11 +117,11 @@ function changeTurn() {
     }
 }
 
-function checkForWinner(boardTable) {
+function checkForWinner(boardHTML) {
 
     let tiles = [];
 
-    for(let row of boardTable.rows) {
+    for(let row of boardHTML.rows) {
         for(let cell of row.cells) {
             tiles.push(cell.innerHTML);
         }
