@@ -1,4 +1,5 @@
 class Game {
+
     constructor(clientSockets) {
         this.clientSockets = clientSockets;
     }
@@ -10,7 +11,7 @@ class Game {
             }
         }, 50);
     }
-
+    
 }
 
 module.exports = Game;

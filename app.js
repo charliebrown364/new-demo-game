@@ -25,8 +25,8 @@ io.on('connection', (socket) => {
     });  
 });
 
-http.listen(3000, () => {
-    console.log('Listening on *:3000 pog');
+http.listen(3001, () => {
+    console.log('Listening on *:3001');
 });
 
 const game = new Game(clientSockets);
