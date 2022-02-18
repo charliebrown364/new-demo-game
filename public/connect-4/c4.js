@@ -1,29 +1,29 @@
 const socket = io();
 
 socket.on('update game', () => {
-    updateUI();
+    updateGame();
 });
 
 let turn = 'red';
 let clicked = false;
-let mouseX = null;
-let mouseY = null;
-let winner = 'none';
+let clickedCell = null;
+let winner = null;
 
 const NUM_ROWS = 6;
 const NUM_COLS = 7;
 
 document.addEventListener('click', (e) => {
-    mouseX = e.x
-    mouseY = e.y;
-    clicked = true;
+    clickedCell = [
+        e.target.parentElement.rowIndex,
+        e.target.cellIndex
+    ];
 });
 
-function updateUI() {
+function updateGame() {
 
-    const boardHTML  = document.getElementById("board");
-    const turnHTML   = document.getElementById("turn");
-    const statusHTML = document.getElementById("status");
+    let boardHTML  = document.getElementById("board");
+    let turnHTML   = document.getElementById("turn");
+    let statusHTML = document.getElementById("status");
 
     // make board
 
@@ -31,13 +31,13 @@ function updateUI() {
 
         for(let i = 0; i < NUM_ROWS; i++) {
             let row = boardHTML.insertRow();
-
+    
             for(let j = 0; j < NUM_COLS; j++) {
-
+    
                 let cell = row.insertCell();
-                cell.className = 'tile';
+                cell.className = 'cell';
                 cell.style.backgroundColor = 'gray';
-
+    
             }
         }
 
@@ -45,17 +45,13 @@ function updateUI() {
 
     // game
 
-    if (clicked && (winner === 'none')) {
-
-        clicked = false;
+    if (clickedCell !== null && winner === null) {
 
         // board
 
-        selectedColumn = getColumn(boardHTML);
-
         for (let j = NUM_ROWS-1; j >= 0; j--) {
             
-            cell = boardHTML.rows[j].cells[selectedColumn];
+            cell = boardHTML.rows[j].cells[clickedCell[1]];
             
             if (cell.style.backgroundColor == 'gray') {
                 statusHTML.innerHTML = '';
@@ -69,6 +65,8 @@ function updateUI() {
 
         }
 
+        clickedCell = null;
+
         // turn
 
         changeTurn();
@@ -78,24 +76,10 @@ function updateUI() {
 
         checkForWinner(boardHTML);
 
-        if (winner != 'none') {
-            statusHTML.innerHTML = `winner! ${winner}`;
+        if (winner != null) {
+            statusHTML.innerHTML = `${winner} wins!`;
         }
 
-    }
-
-}
-
-function getColumn(boardHTML) {
-    
-    let boardHTMLPos = boardHTML.getBoundingClientRect();
-    let cellPos = boardHTML.rows[0].cells[0].getBoundingClientRect();
-
-    for (let i = 0; i < NUM_COLS; i++) {
-        let cellLeftX = boardHTMLPos.x + i * cellPos.width;
-        if (cellLeftX <= mouseX && mouseX < cellLeftX + cellPos.width + 2*i + 4) {
-            return i;
-        } 
     }
 
 }
@@ -161,10 +145,6 @@ function changeTurn() {
     } else {
         turn = 'red';
     }
-}
-
-function sameColorCells(cell1, cell2) {
-    return cell1.style.backgroundColor == cell2.style.backgroundColor;
 }
 
 function getCell(boardHTML, rowIndex, cellIndex) {

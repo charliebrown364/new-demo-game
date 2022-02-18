@@ -1,0 +1,8 @@
+Games To Make
+- ultimate tic tac toe
+- snake
+- chess
+- checkers
+- sudoku
+- wordle
+- hangman

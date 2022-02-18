@@ -5,15 +5,14 @@ socket.on('update game', () => {
 });
 
 let turn = 'X';
-let clicked = false;
-let mouseX = null;
-let mouseY = null;
+let clickedCell = null;
 let winner = null;
 
 document.addEventListener('click', (e) => {
-    mouseX = e.x
-    mouseY = e.y;
-    clicked = true;
+    clickedCell = [
+        e.target.parentElement.rowIndex,
+        e.target.cellIndex
+    ];
 });
 
 function updateUI() {
@@ -43,15 +42,12 @@ function updateUI() {
 
     // game
 
-    if (clicked && (winner === null)) {
-
-        clicked = false;
+    if (clickedCell !== null && winner === null) {
 
         // board
 
-        tileCoords = getTile(boardHTML);
-        tile = boardHTML.rows[tileCoords[1]].cells[tileCoords[0]];
-        
+        tile = boardHTML.rows[clickedCell[0]].cells[clickedCell[1]];
+
         if (tile.innerHTML === '') {
             tile.innerHTML = turn;
             statusHTML.innerHTML = '';
@@ -59,6 +55,8 @@ function updateUI() {
             statusHTML.innerHTML = 'cannot go there!';
             changeTurn();
         }
+
+        clickedCell = null;
 
         // winner
 
@@ -68,44 +66,10 @@ function updateUI() {
             changeTurn();
             turnHTML.innerHTML = `turn: ${turn}`;
         } else {
-            statusHTML.innerHTML = `winner! ${turn}`;
+            statusHTML.innerHTML = `${turn} wins!`;
         }
 
     }
-
-}
-
-function getTile(boardHTML) {
-    
-    let boardHTMLPos = boardHTML.getBoundingClientRect();
-    let cellPos = boardHTML.rows[0].cells[0].getBoundingClientRect();
-
-    let boardX = boardHTMLPos.x;
-    let boardY = boardHTMLPos.y;
-
-    let cellWidth = cellPos.width;
-    let cellHeight = cellPos.height;
-
-    let i = null;
-    let j = null;
-
-    if (boardX <= mouseX && mouseX < boardX + cellWidth) {
-        i = 0;
-    } else if (boardX + cellWidth <= mouseX && mouseX < boardX + 2 * cellWidth) {
-        i = 1;
-    } else if (boardX + 2 * cellWidth <= mouseX && mouseX < boardX + 3 * cellHeight) {
-        i = 2;
-    }
-
-    if (boardY <= mouseY && mouseY < boardY + cellHeight) {
-        j = 0;
-    } else if (boardY + cellHeight <= mouseY && mouseY < boardY + 2 * cellHeight) {
-        j = 1;
-    } else if (boardY + 2 * cellHeight <= mouseY && mouseY < boardY + 3 * cellHeight) {
-        j = 2;
-    }
-
-    return [i, j];
 
 }
 
