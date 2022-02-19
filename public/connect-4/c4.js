@@ -9,9 +9,6 @@ let clicked = false;
 let clickedCell = null;
 let winner = null;
 
-const NUM_ROWS = 6;
-const NUM_COLS = 7;
-
 document.addEventListener('click', (e) => {
     clickedCell = [
         e.target.parentElement.rowIndex,
@@ -29,10 +26,10 @@ function updateGame() {
 
     if (boardHTML.rows.length === 0) {
 
-        for(let i = 0; i < NUM_ROWS; i++) {
+        for(let i = 0; i < 6; i++) {
             let row = boardHTML.insertRow();
     
-            for(let j = 0; j < NUM_COLS; j++) {
+            for(let j = 0; j < 7; j++) {
     
                 let cell = row.insertCell();
                 cell.className = 'cell';
@@ -49,7 +46,7 @@ function updateGame() {
 
         // board
 
-        for (let j = NUM_ROWS-1; j >= 0; j--) {
+        for (let j = 5; j >= 0; j--) {
             
             cell = boardHTML.rows[j].cells[clickedCell[1]];
             
@@ -90,8 +87,8 @@ function checkForWinner(boardHTML) {
 
     // horizontal
 
-    for (let i = 0; i < NUM_ROWS; i++) {
-        for (let j = 0; j < NUM_COLS - 3; j++) {
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 4; j++) {
             combo = [getCell(boardHTML, i, j), getCell(boardHTML, i, j+1), getCell(boardHTML, i, j+2), getCell(boardHTML, i, j+3)];
             cellCombosOf4.push(combo);
         }
@@ -99,8 +96,8 @@ function checkForWinner(boardHTML) {
 
     // vertical
     
-    for (let j = 0; j < NUM_COLS; j++) {
-        for (let i = 0; i < NUM_ROWS - 3; i++) {
+    for (let j = 0; j < 7; j++) {
+        for (let i = 0; i < 3; i++) {
             combo = [getCell(boardHTML, i, j), getCell(boardHTML, i+1, j), getCell(boardHTML, i+2, j), getCell(boardHTML, i+3, j)];
             cellCombosOf4.push(combo);
         }
@@ -108,8 +105,8 @@ function checkForWinner(boardHTML) {
 
     // diagonal left to right
 
-    for (let i = 0; i < NUM_ROWS - 3; i++) {
-        for (let j = 0; j < NUM_COLS - 3; j++) {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 4; j++) {
             combo = [getCell(boardHTML, i, j), getCell(boardHTML, i+1, j+1), getCell(boardHTML, i+2, j+2), getCell(boardHTML, i+3, j+3)];
             cellCombosOf4.push(combo);
         }
@@ -117,8 +114,8 @@ function checkForWinner(boardHTML) {
 
     // diagonal right to left
 
-    for (let i = 0; i < NUM_ROWS - 3; i++) {
-        for (let j = 3; j < NUM_COLS; j++) {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 3; j < 7; j++) {
             combo = [getCell(boardHTML, i, j), getCell(boardHTML, i+1, j-1), getCell(boardHTML, i+2, j-2), getCell(boardHTML, i+3, j-3)];
             cellCombosOf4.push(combo);
         }

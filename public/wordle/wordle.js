@@ -4,17 +4,32 @@ socket.on('update game', () => {
     updateUI();
 });
 
+let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
 let gameOver = false;
-let current_row_index = 0;
-let current_cell_index = 0;
-let current_word = '     ';
-let current_letter = '';
 
-let word = 'fjord';
+let currentRowIndex = 0;
+let currentCellIndex = 0;
+let currentWord = [' ', ' ', ' ', ' ', ' '];
+let currentLetter = '';
 
-document.getElementById("board").addEventListener("keyup", function(e) {
-    current_letter = e;
-    // current_word += current_letter;
+let word = 'FJORD';
+
+document.addEventListener("keydown", function(e) {
+    
+    currentLetter = e.code.replace('Key', '');
+
+    if (letters.includes(currentLetter)) {
+        currentWord[currentCellIndex] = currentLetter;    
+        currentCellIndex++;
+    }
+
+    if (e.code === 'Backspace' && currentCellIndex !== 0) {
+        currentCellIndex--;
+        currentWord[currentCellIndex] = ' ';
+        currentLetter = '';
+    } 
+
 });
 
 function updateUI() {
@@ -43,15 +58,18 @@ function updateUI() {
 
     // game
 
-    if (current_letter !== '' && !gameOver) {
+    if (!gameOver) {
 
         // board
 
-        current_cell = getCell(boardHTML);
-        current_cell.innerHTML = current_letter;
-        current_letter = '';
+        for (let i = 0; i < 5; i++) {
+            currentCell = boardHTML.rows[currentRowIndex].cells[i];
+            currentCell.innerHTML = currentWord[i];
+        }
 
-        if (current_word.length === 5) {
+        // winner
+
+        if (!currentWord.includes(' ')) {
             checkForWinner(boardHTML);
         }
 
@@ -63,17 +81,28 @@ function updateUI() {
 
 }
 
-function getCell(boardHTML) {
-    
-    for(let i = 0; i < 5; i++) {
-        cell = boardHTML.rows[current_row_index].cells[i];
-        if (cell.innerHTML === ' ') {
-            return cell;
+function checkForWinner(boardHTML) {
+
+    gameOver = true;
+
+    for (let i = 0; i < 5; i++) {
+
+        let cells = boardHTML.rows[currentRowIndex].cells;
+        let letter = currentWord[i];
+        
+        if (word[i] === letter) {
+            cells[i].style.backgroundColor = 'green';
+        } else if (word.includes(letter)) {
+            gameOver = false;
+            cells[i].style.backgroundColor = 'yellow';
+        } else {
+            gameOver = false;
         }
 
     }
-}
 
-function checkForWinner(boardHTML) {
+    currentRowIndex++;
+    currentCellIndex = 0;
+    currentWord = [' ', ' ', ' ', ' ', ' '];
 
 }
