@@ -4,105 +4,102 @@ socket.on('update game', () => {
     updateUI();
 });
 
-let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let boardHTML;
+let statusHTML;
 
 let gameOver = false;
-
+let keyPressed = false;
 let currentRowIndex = 0;
 let currentCellIndex = 0;
-let currentWord = [' ', ' ', ' ', ' ', ' '];
-let currentLetter = '';
 
 let word = 'FJORD';
 
-document.addEventListener("keydown", function(e) {
-    
-    currentLetter = e.code.replace('Key', '');
-
-    if (letters.includes(currentLetter)) {
-        currentWord[currentCellIndex] = currentLetter;    
-        currentCellIndex++;
-    }
-
-    if (e.code === 'Backspace' && currentCellIndex !== 0) {
-        currentCellIndex--;
-        currentWord[currentCellIndex] = ' ';
-        currentLetter = '';
-    } 
-
-});
+document.addEventListener("keydown", (e) => keyPressed = e.code);
 
 function updateUI() {
 
-    const boardHTML  = document.getElementById("board");
-    const statusHTML = document.getElementById("status");
+    boardHTML  = document.getElementById("board");
+    statusHTML = document.getElementById("status");
 
-    // make board
-
-    if (boardHTML.rows.length === 0) {
-
-        for(let i = 0; i < 6; i++) {
-            let row = boardHTML.insertRow();
-
-            for(let j = 0; j < 5; j++) {
-
-                let cell = row.insertCell();
-                cell.className = 'letter';
-                cell.innerHTML = '';
-                cell.style.backgroundColor = 'gray';
-
-            }
-        }
-
+    if (boardHTML.rows.length === 0) { createBoard(); }
+    if (gameOver) { return; }
+    
+    if (keyPressed) {
+        updateBoard();
+        checkForWinner();
+        keyPressed = false;
     }
+    
+}
 
-    // game
+function createBoard() {
+    
+    for(let i = 0; i < 6; i++) {
+        let row = boardHTML.insertRow();
 
-    if (!gameOver) {
+        for(let j = 0; j < 5; j++) {
 
-        // board
+            let cell = row.insertCell();
+            cell.className = 'letter';
+            cell.style.backgroundColor = 'white';
 
-        for (let i = 0; i < 5; i++) {
-            currentCell = boardHTML.rows[currentRowIndex].cells[i];
-            currentCell.innerHTML = currentWord[i];
         }
-
-        // winner
-
-        if (!currentWord.includes(' ')) {
-            checkForWinner(boardHTML);
-        }
-
-        if (gameOver) {
-            statusHTML.innerHTML = `you win!`;
-        }
-
     }
 
 }
 
-function checkForWinner(boardHTML) {
+function updateBoard() {
 
-    gameOver = true;
+    let cells = boardHTML.rows[currentRowIndex].cells;
+    let key = keyPressed.replace('Key', '');
+
+    if ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.includes(key)) {
+        cells[currentCellIndex].innerHTML = key;
+        currentCellIndex++;
+    }
+
+    if (keyPressed === 'Backspace') {
+        currentCellIndex = Math.max(currentCellIndex-1, 0);
+        cells[currentCellIndex].innerHTML = ' ';
+    }
+
+}
+
+function checkForWinner() {
+
+    let cells = boardHTML.rows[currentRowIndex].cells;
+    let currentWord = rowHTML();
+
+    if (currentWord.length !== 5) { return; }
 
     for (let i = 0; i < 5; i++) {
 
-        let cells = boardHTML.rows[currentRowIndex].cells;
-        let letter = currentWord[i];
+        let letter = cells[i].innerHTML;
         
         if (word[i] === letter) {
             cells[i].style.backgroundColor = 'green';
         } else if (word.includes(letter)) {
-            gameOver = false;
             cells[i].style.backgroundColor = 'yellow';
         } else {
-            gameOver = false;
+            cells[i].style.backgroundColor = 'gray';
         }
 
     }
 
+    if (word === currentWord) {
+        gameOver = true;
+        statusHTML.innerHTML = 'you win!';
+    }
+
     currentRowIndex++;
     currentCellIndex = 0;
-    currentWord = [' ', ' ', ' ', ' ', ' '];
 
+}
+
+function rowHTML() {
+    let currentWord = '';
+    for (const cell of boardHTML.rows[currentRowIndex].cells) {
+        currentWord += cell.innerHTML;
+    }
+    return currentWord;
 }

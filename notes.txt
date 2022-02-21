@@ -1,12 +1,11 @@
 Games Made
 - tic tac toe
 - connect 4
-- wordle (w/out dictionary API or answer API)
+- wordle (w/out word API)
+- hangman
 
 Games To Make
 - ultimate tic tac toe
 - snake
 - chess
-- checkers
 - sudoku
-- hangman

@@ -4,9 +4,14 @@ socket.on('update game', () => {
     updateUI();
 });
 
+let boardHTML;
+let turnHTML;
+let statusHTML;
+
 let turn = 'X';
-let clickedCell = null;
-let winner = null;
+let clickedCell = false;
+let boardUpdated = false;
+let gameOver = false;
 
 document.addEventListener('click', (e) => {
     clickedCell = [
@@ -17,71 +22,72 @@ document.addEventListener('click', (e) => {
 
 function updateUI() {
 
-    const boardHTML  = document.getElementById("board");
-    const turnHTML   = document.getElementById("turn");
-    const statusHTML = document.getElementById("status");
+    boardHTML  = document.getElementById("board");
+    turnHTML   = document.getElementById("turn");
+    statusHTML = document.getElementById("status");
 
-    // make board
+    if (boardHTML.rows.length === 0) { createBoard(); }
+    if (gameOver) { return; }
 
-    if (boardHTML.rows.length === 0) {
+    if (clickedCell) {
 
-        for(let i = 0; i < 3; i++) {
-            let row = boardHTML.insertRow();
+        updateBoard();
 
-            for(let j = 0; j < 3; j++) {
-
-                let cell = row.insertCell();
-                cell.className = 'tile';
-                cell.innerHTML = '';
-                cell.style.backgroundColor = 'gray';
-
-            }
+        if (boardUpdated) {
+            checkForWinner();
+            changeTurn();
         }
+
+        clickedCell = false;
 
     }
 
-    // game
+}
 
-    if (clickedCell !== null && winner === null) {
+function createBoard() {
 
-        // board
+    for(let i = 0; i < 3; i++) {
+        let row = boardHTML.insertRow();
 
-        tile = boardHTML.rows[clickedCell[0]].cells[clickedCell[1]];
+        for(let j = 0; j < 3; j++) {
 
-        if (tile.innerHTML === '') {
-            tile.innerHTML = turn;
-            statusHTML.innerHTML = '';
-        } else {
-            statusHTML.innerHTML = 'cannot go there!';
-            changeTurn();
+            let cell = row.insertCell();
+            cell.className = 'tile';
+            cell.innerHTML = '';
+            cell.style.backgroundColor = 'gray';
+
         }
+    }
 
-        clickedCell = null;
+}
 
-        // winner
+function updateBoard() {
 
-        checkForWinner(boardHTML);
+    tile = boardHTML.rows[clickedCell[0]].cells[clickedCell[1]];
+    boardUpdated = (tile.innerHTML === '');
 
-        if (winner === null) {
-            changeTurn();
-            turnHTML.innerHTML = `turn: ${turn}`;
-        } else {
-            statusHTML.innerHTML = `${turn} wins!`;
-        }
-
+    if (tile.innerHTML === '') {
+        tile.innerHTML = turn;
+        statusHTML.innerHTML = '';
+    } else {
+        statusHTML.innerHTML = 'cannot go there!';
     }
 
 }
 
 function changeTurn() {
+    
     if (turn === 'X') {
         turn = 'O';
     } else {
         turn = 'X';
     }
+
+    turnHTML.innerHTML = `turn: ${turn}`;
+
 }
 
-function checkForWinner(boardHTML) {
+function checkForWinner() {
 
     let tiles = [];
 
@@ -104,8 +110,9 @@ function checkForWinner(boardHTML) {
 
     for (let arr of winningOptions) {
         if (arr[0] === arr[1] && arr[1] === arr[2] && arr[0] && arr[2]) {
-            winner = arr[0];
-            return;
+            gameOver = true;
+            statusHTML.innerHTML = `${turn} wins!`;
+            break;
         }
     }
 
