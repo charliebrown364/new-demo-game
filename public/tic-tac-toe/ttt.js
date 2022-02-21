@@ -1,9 +1,3 @@
-const socket = io();
-
-socket.on('update game', () => {
-    updateUI();
-});
-
 let boardHTML;
 let turnHTML;
 let statusHTML;
@@ -19,6 +13,10 @@ document.addEventListener('click', (e) => {
         e.target.cellIndex
     ];
 });
+
+function startGame() {
+    setInterval(updateUI, 50);
+}
 
 function updateUI() {
 

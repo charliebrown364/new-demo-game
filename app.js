@@ -1,33 +1,33 @@
-const express = require('express');
-const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const Game = require('./game');
+// const express = require('express');
+// const app = express();
+// const http = require('http').Server(app);
+// const io = require('socket.io')(http);
+// const Game = require('./game');
 
-app.use(express.static('public'))
+// app.use(express.static('public'))
 
-app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/public/index.html');
-});
+// app.get('/', function(req, res) {
+// 	res.sendFile(__dirname + '/public/index.html');
+// });
 
-let clientSockets = {};
+// let clientSockets = {};
 
-io.on('connection', (socket) => {
-    let socketId = socket.id;
-    clientSockets[socketId] = socket;
+// io.on('connection', (socket) => {
+//     let socketId = socket.id;
+//     clientSockets[socketId] = socket;
 
-    console.log('Client socket connected:' + socket.id);
+//     console.log('Client socket connected:' + socket.id);
 
-    socket.on('disconnect', () => {
-        console.log('Client socket disconnected: ' + socketId);
+//     socket.on('disconnect', () => {
+//         console.log('Client socket disconnected: ' + socketId);
 
-        delete clientSockets[socketId];
-    });  
-});
+//         delete clientSockets[socketId];
+//     });  
+// });
 
-http.listen(3001, () => {
-    console.log('Listening on *:3001');
-});
+// http.listen(3001, () => {
+//     console.log('Listening on *:3001');
+// });
 
-const game = new Game(clientSockets);
-game.start();
+// const game = new Game(clientSockets);
+// game.start();

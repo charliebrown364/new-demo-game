@@ -1,9 +1,3 @@
-const socket = io();
-
-socket.on('update game', () => {
-    updateUI();
-});
-
 let guessCounterHTML;
 let guessedLettersHTML;
 let boardHTML;
@@ -16,6 +10,10 @@ let guessedLetters = [];
 let word = 'SUPERCAL';
 
 document.addEventListener("keydown", (e) => keyPressed = e.code.replace('Key', ''));
+
+function startGame() {
+    setInterval(updateUI, 50);
+}
 
 function updateUI() {
 

@@ -4,11 +4,10 @@
         <title>Hangman</title>
 
         <link rel="stylesheet" href="hangman.css">
-        <script src="/socket.io/socket.io.js"></script>
         <script src="hangman.js"></script>
 
     </head>
-   <body>
+   <body onload="startGame()">
 
         <h1 id="title">Hangman</h1>
         <div id="guess counter">number of wrong guesses: 0</div>

@@ -7,5 +7,5 @@ Games Made
 Games To Make
 - ultimate tic tac toe
 - snake
-- chess
-- sudoku
+- 2048
+- minesweeper

@@ -1,9 +1,3 @@
-const socket = io();
-
-socket.on('update game', () => {
-    updateUI();
-});
-
 let boardHTML;
 let statusHTML;
 
@@ -15,6 +9,10 @@ let currentCellIndex = 0;
 let word = 'FJORD';
 
 document.addEventListener("keydown", (e) => keyPressed = e.code);
+
+function startGame() {
+    setInterval(updateUI, 50);
+}
 
 function updateUI() {
 
