@@ -3,6 +3,7 @@ let statusHTML;
 let keyboard1HTML;
 let keyboard2HTML;
 let keyboard3HTML;
+let helpHTML;
 
 let alphabetUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 let alphabetRows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
@@ -16,9 +17,11 @@ let currentWord = '';
 let correctWords;
 let allWords;
 getWordList();
-
 let correctWord = correctWords[Math.floor(Math.random() * correctWords.length)];
+
+// let correctWord = 'fjord';
 let numAttempts = 6;
+let getHelp = true;
 
 document.addEventListener("keydown", (e) => keyPressed = e.code);
 document.addEventListener("click", (e) => keyPressed = e.target.innerHTML);
@@ -29,11 +32,12 @@ function startGame() {
 
 function updateUI() {
 
-    boardHTML    = document.getElementById("board");
-    statusHTML   = document.getElementById("status");
+    boardHTML     = document.getElementById("board");
+    statusHTML    = document.getElementById("status");
     keyboard1HTML = document.getElementById("keyboardRow1");
     keyboard2HTML = document.getElementById("keyboardRow2");
     keyboard3HTML = document.getElementById("keyboardRow3");
+    helpHTML      = document.getElementById("help");
     
     if (boardHTML.rows.length === 0) { createBoard(); }
     if (gameOver) { return; }
@@ -43,6 +47,10 @@ function updateUI() {
         
         if (keyPressed === 'Enter') {
             checkForWinner();
+        }
+
+        if (getHelp) {
+            updateHelper();
         }
 
         keyPressed = false;
@@ -79,6 +87,36 @@ function updateBoard() {
     if (keyPressed === 'Backspace') {
         currentCellIndex = Math.max(currentCellIndex-1, 0);
         cells[currentCellIndex].innerHTML = ' ';
+    }
+
+}
+
+function updateHelper() {
+
+    helpHTML.innerHTML = '';
+
+    for (let potentialCorrectWord of correctWords) {
+
+        let add = true;
+
+        for (let i = 0; i < correctWord.length; i++) {
+
+            let potentialCorrectWordLetter = potentialCorrectWord[i];
+            let currentLetter = boardHTML.rows[currentRowIndex].cells[i].innerHTML;
+            let currentLetterColor = boardHTML.rows[currentRowIndex].cells[i].style.backgroundColor;
+
+            if ((currentLetterColor === "green"  &&  currentLetter !== potentialCorrectWordLetter) ||
+                (currentLetterColor === "yellow" && !potentialCorrectWord.includes(currentLetter)) ||
+                (currentLetterColor === "gray")) {
+                    add = false;
+            }
+
+        }
+
+        if (add) {
+            helpHTML.innerHTML += `${potentialCorrectWord}, `;
+        }
+
     }
 
 }
