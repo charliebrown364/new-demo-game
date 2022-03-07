@@ -141,24 +141,24 @@ function checkForWinner() {
 
 function showHelp() {
     getHelp = !getHelp;
-    if (getHelp) {
-        helpHTML.innerHTML = 'guess a word to get help!';
-    } else {
-        helpHTML.innerHTML = '';
-    }
+    updateHelper();
 }
 
 function updateHelper() {
 
+    if (!getHelp) {
+        helpHTML.innerHTML = '';
+        return;
+    }
+
     for (let potentialCorrectWord of prevCorrectWords) {
         for (let i = 0; i < correctWord.length; i++) {
 
-            let potentialCorrectWordLetter = potentialCorrectWord[i];
             let currentLetter = capitalToLowercase[boardHTML.rows[currentRowIndex].cells[i].innerHTML];
             let currentLetterColor = boardHTML.rows[currentRowIndex].cells[i].style.backgroundColor;
 
-            if ((currentLetterColor === "green"  &&  currentLetter !== potentialCorrectWordLetter) ||
-                (currentLetterColor === "yellow" && (!potentialCorrectWord.includes(currentLetter) || currentLetter === potentialCorrectWordLetter)) ||
+            if ((currentLetterColor === "green"  &&  currentLetter !== potentialCorrectWord[i]) ||
+                (currentLetterColor === "yellow" && (!potentialCorrectWord.includes(currentLetter) || currentLetter === potentialCorrectWord[i])) ||
                 (currentLetterColor === "gray"   &&  potentialCorrectWord.includes(currentLetter))) {
                     prevCorrectWords = prevCorrectWords.filter(e => e !== potentialCorrectWord);
             }
@@ -166,9 +166,13 @@ function updateHelper() {
         }
     }
 
-    helpHTML.innerHTML = 'possible words:';
-    for (let potentialCorrectWord of prevCorrectWords) {
-        helpHTML.innerHTML += `<br> ${potentialCorrectWord}`;
+    if (prevCorrectWords.length < 30) {
+        helpHTML.innerHTML = 'possible words:';
+        for (let potentialCorrectWord of prevCorrectWords) {
+            helpHTML.innerHTML += `<br> ${potentialCorrectWord}`;
+        }
+    } else {
+        helpHTML.innerHTML = 'guess more words first!';
     }
 
 }
