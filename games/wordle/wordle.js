@@ -166,7 +166,7 @@ function updateHelper() {
         }
     }
 
-    if (prevCorrectWords.length < 30) {
+    if (prevCorrectWords.length < 50) {
         helpHTML.innerHTML = 'possible words:';
         for (let potentialCorrectWord of prevCorrectWords) {
             helpHTML.innerHTML += `<br> ${potentialCorrectWord}`;
