@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wordle</title>
+
+        <link rel="stylesheet" href="quordle.css">
+        <script src="quordle.js"></script>
+
+    </head>
+   <body onload="startGame()">
+        
+        <br>
+        <div id="title" class="title">Wordle</div>
+        <br>
+        <table id="board"></table>
+        <br>
+        <div id="status" class="status"></div>
+        
+        <table id="keyboardRow1">
+            <tr class="keyboardRow1">
+                <td class='keyboardLetter'>Q</td>
+                <td class='keyboardLetter'>W</td>
+                <td class='keyboardLetter'>E</td>
+                <td class='keyboardLetter'>R</td>
+                <td class='keyboardLetter'>T</td>
+                <td class='keyboardLetter'>Y</td>
+                <td class='keyboardLetter'>U</td>
+                <td class='keyboardLetter'>I</td>
+                <td class='keyboardLetter'>O</td>
+                <td class='keyboardLetter'>P</td>
+            </tr>
+        </table>
+        <table id="keyboardRow2">
+            <tr class="keyboardRow2">
+                <td class='keyboardLetter'>A</td>
+                <td class='keyboardLetter'>S</td>
+                <td class='keyboardLetter'>D</td>
+                <td class='keyboardLetter'>F</td>
+                <td class='keyboardLetter'>G</td>
+                <td class='keyboardLetter'>H</td>
+                <td class='keyboardLetter'>J</td>
+                <td class='keyboardLetter'>K</td>
+                <td class='keyboardLetter'>L</td>
+            </tr>
+        </table>
+        <table id="keyboardRow3">
+            <tr class="keyboardRow3">
+                <td class='keyboardLetter'>Z</td>
+                <td class='keyboardLetter'>X</td>
+                <td class='keyboardLetter'>C</td>
+                <td class='keyboardLetter'>V</td>
+                <td class='keyboardLetter'>B</td>
+                <td class='keyboardLetter'>N</td>
+                <td class='keyboardLetter'>M</td>
+            </tr>
+        </table>
+
+        <button onclick="showHelp()">Help</button>
+        <div id="help"></div>
+
+        <nav>
+            <ul>
+                <li><a href="../../index/index.html">Home</a></li>
+            </ul>
+        </nav>
+
+   </body>
+</html>

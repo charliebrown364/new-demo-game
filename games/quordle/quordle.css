@@ -1,0 +1,38 @@
+body {
+    background-color: rgb(184, 235, 248);
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title, .status {
+    text-align: center;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.status {
+    font-size: 20px;
+}
+
+td.letter, .keyboardLetter {
+    width: 50px;
+    height: 50px;
+    table-layout: fixed;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.keyboardLetter {
+    background-color: white;
+}
+
+.keyboardRow1, .keyboardRow2, .keyboardRow3 {
+    margin-left: auto;
+    margin-right: auto;
+}
