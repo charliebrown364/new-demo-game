@@ -10,13 +10,18 @@
    <body onload="startGame()">
         
         <br>
-        <div id="title" class="title">Wordle</div>
+        <div id="title" class="title">Quordle</div>
         <br>
-        <table id="board"></table>
+        <div class="boards">
+            <table id="board1"></table>
+            <table id="board2"></table>
+            <table id="board3"></table>
+            <table id="board4"></table>
+        </div>
         <br>
         <div id="status" class="status"></div>
         
-        <table id="keyboardRow1">
+        <table id="keyboardRow1" class="keyboardRow">
             <tr class="keyboardRow1">
                 <td class='keyboardLetter'>Q</td>
                 <td class='keyboardLetter'>W</td>
@@ -30,7 +35,7 @@
                 <td class='keyboardLetter'>P</td>
             </tr>
         </table>
-        <table id="keyboardRow2">
+        <table id="keyboardRow2" class="keyboardRow">
             <tr class="keyboardRow2">
                 <td class='keyboardLetter'>A</td>
                 <td class='keyboardLetter'>S</td>
@@ -43,7 +48,7 @@
                 <td class='keyboardLetter'>L</td>
             </tr>
         </table>
-        <table id="keyboardRow3">
+        <table id="keyboardRow3" class="keyboardRow">
             <tr class="keyboardRow3">
                 <td class='keyboardLetter'>Z</td>
                 <td class='keyboardLetter'>X</td>
@@ -55,8 +60,8 @@
             </tr>
         </table>
 
-        <button onclick="showHelp()">Help</button>
-        <div id="help"></div>
+        <!-- <button onclick="showHelp()">Help</button> -->
+        <!-- <div id="help"></div> -->
 
         <nav>
             <ul>
