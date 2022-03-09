@@ -4,12 +4,10 @@ body {
 
 .boards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 50px;
-    row-gap: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-    margin-bottom: 50px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 30px;
+    row-gap: 30px;
+    margin: 20px 100px 20px 100px;
 }
 
 .title, .status {
@@ -17,12 +15,12 @@ body {
 }
 
 .title {
-    font-size: 30px;
+    font-size: 50px;
     font-weight: bold;
 }
 
 .status {
-    font-size: 20px;
+    font-size: 30px;
 }
 
 td.letter, .keyboardLetter {
@@ -34,6 +32,8 @@ td.letter, .keyboardLetter {
 }
 
 .keyboardLetter {
+    width: 70px;
+    height: 70px;
     background-color: white;
 }
 
