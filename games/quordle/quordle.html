@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Wordle</title>
+        <title>Quordle</title>
 
         <link rel="stylesheet" href="quordle.css">
         <script src="quordle.js"></script>
@@ -9,20 +9,16 @@
     </head>
    <body onload="startGame()">
         
-        <br>
         <div id="title" class="title">Quordle</div>
-        <br>
         <div class="boards">
             <table id="board1"></table>
             <table id="board2"></table>
             <table id="board3"></table>
             <table id="board4"></table>
         </div>
-        <br>
-        <div id="status" class="status"></div>
         
         <table id="keyboardRow1" class="keyboardRow">
-            <tr class="keyboardRow1">
+            <tr>
                 <td class='keyboardLetter'>Q</td>
                 <td class='keyboardLetter'>W</td>
                 <td class='keyboardLetter'>E</td>
@@ -36,7 +32,7 @@
             </tr>
         </table>
         <table id="keyboardRow2" class="keyboardRow">
-            <tr class="keyboardRow2">
+            <tr>
                 <td class='keyboardLetter'>A</td>
                 <td class='keyboardLetter'>S</td>
                 <td class='keyboardLetter'>D</td>
@@ -49,7 +45,7 @@
             </tr>
         </table>
         <table id="keyboardRow3" class="keyboardRow">
-            <tr class="keyboardRow3">
+            <tr>
                 <td class='keyboardLetter'>Z</td>
                 <td class='keyboardLetter'>X</td>
                 <td class='keyboardLetter'>C</td>
@@ -60,8 +56,7 @@
             </tr>
         </table>
 
-        <!-- <button onclick="showHelp()">Help</button> -->
-        <!-- <div id="help"></div> -->
+        <div id="status" class="status"></div>
 
    </body>
 </html>

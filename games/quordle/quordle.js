@@ -10,6 +10,7 @@ let alphabetLowercase = 'abcdefghijklmnopqrstuvwxyz';
 let alphabetRows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 let capitalToLowercase = {' ': ' ', '': '', 'Q': 'q','W': 'w','E': 'e','R': 'r','T': 't','Y': 'y','U': 'u','I': 'i','O': 'o','P': 'p','A': 'a','S': 's','D': 'd','F': 'f','G': 'g','H': 'h','J': 'j','K': 'k','L': 'l','Z': 'z','X': 'x','C': 'c','V': 'v','B': 'b','N': 'n','M': 'm'};
 
+let gameInitialized = false;
 let gameOver = [false, false, false, false];
 let keyPressed = false;
 let currentRowIndex = 0;
@@ -53,14 +54,26 @@ function updateUI() {
     keyboard3HTML = document.getElementById("keyboardRow3");
     helpHTML      = document.getElementById("help");
     
-    if (boardHTMLList[0].rows.length === 0) { initializeGame(); }
+    if (!gameInitialized) {
+        initializeGame();
+        gameInitialized = true;
+    }
+    
     if (gameOver.every((e) => e)) { return; }
 
     if (keyPressed) {
 
         updateLetter();
 
+        statusHTML.innerHTML = `keyPressed: ${keyPressed}<br>`;
+        statusHTML.innerHTML += `currentWord: ${currentWord}<br>`;
+        statusHTML.innerHTML += `currentWord.length == 5: ${currentWord.length == 5}<br>`;
+        statusHTML.innerHTML += `allWords.includes(currentWord): ${allWords.includes(currentWord)}<br>`;
+
         if (keyPressed === 'Enter' && currentWord.length == 5 && allWords.includes(currentWord)) {
+            
+            statusHTML.innerHTML = `Enter key has been pressed<br>`;
+
             updateWord();
             updateKeyboard();
             checkForWinner();
@@ -158,16 +171,24 @@ function updateLetter() {
 
 function updateWord() {
 
+    statusHTML.innerHTML += `currentWord: ${currentWord}<br>`;
+
     for (let [index, correctWord] of correctWords.entries()) {
 
         if (gameOver[index]) { continue; }
         if (correctWord === currentWord) { gameOver[index] = true; }
+
+        statusHTML.innerHTML += `start of index: ${index}<br>`;
+        statusHTML.innerHTML += `correctWord: ${correctWord}<br>`;
 
         for (let i = 0; i < 5; i++) {
 
             let letter = currentWord[i];
             let backgroundColor = '';
             
+            statusHTML.innerHTML += `start of i: ${i}<br>`;
+            statusHTML.innerHTML += `letter: ${letter}<br>`;
+
             if (correctWord[i] === letter) {
                 backgroundColor = 'green';
             } else if (correctWord.includes(letter)) {
@@ -175,6 +196,8 @@ function updateWord() {
             } else {
                 backgroundColor = 'gray';
             }
+            
+            statusHTML.innerHTML += `backgroundColor: ${backgroundColor}<br>`;
 
             boardHTMLList[index].rows[currentRowIndex].cells[i].style.backgroundColor = backgroundColor;
 
@@ -184,10 +207,16 @@ function updateWord() {
                 (backgroundColor === 'yellow' && keyboardColors[alphabetLowercase.indexOf(letter)][index][i] !== 'green')) {
                     keyboardColors[alphabetLowercase.indexOf(letter)][index][i] = backgroundColor;
             }
+            
+            statusHTML.innerHTML += `end of i: ${i}<br>`;
 
         }
 
+        statusHTML.innerHTML += `end of index: ${index}<br>`;
+
     }
+
+    statusHTML.innerHTML += 'word is entered<br>';
 
 }
 
@@ -231,16 +260,10 @@ function checkForWinner() {
     
     if (gameOver.every((e) => e)) {
         statusHTML.innerHTML = 'you win! <br><br>';
-        return;
     }
     
     else if (currentRowIndex === numAttempts-1) {
-        statusHTML.innerHTML = `you lose! <br> correct words: `;
-        for (let correctWord of correctWords) {
-            statusHTML.innerHTML += `${correctWord}, `;
-        }
-        statusHTML.innerHTML += `<br><br>`;
-        return;
+        statusHTML.innerHTML = `you lose! <br> correct words: ${correctWords[0]}, ${correctWords[1]}, ${correctWords[2]}, ${correctWords[3]}<br><br>`;
     }
     
     else {
