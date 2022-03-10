@@ -6,6 +6,7 @@ let keyboard3HTML;
 let helpHTML;
 
 let alphabetUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let alphabetLowercase = 'abcdefghijklmnopqrstuvwxyz';
 let alphabetRows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 let capitalToLowercase = {' ': ' ', '': '', 'Q': 'q','W': 'w','E': 'e','R': 'r','T': 't','Y': 'y','U': 'u','I': 'i','O': 'o','P': 'p','A': 'a','S': 's','D': 'd','F': 'f','G': 'g','H': 'h','J': 'j','K': 'k','L': 'l','Z': 'z','X': 'x','C': 'c','V': 'v','B': 'b','N': 'n','M': 'm'};
 
@@ -25,6 +26,8 @@ let correctWords = [
     possibleCorrectWords[Math.floor(Math.random() * possibleCorrectWords.length)],
     possibleCorrectWords[Math.floor(Math.random() * possibleCorrectWords.length)]
 ];
+
+let keyboardColors = [];
 
 let numAttempts = 10;
 // let getHelp = false;
@@ -50,7 +53,7 @@ function updateUI() {
     keyboard3HTML = document.getElementById("keyboardRow3");
     helpHTML      = document.getElementById("help");
     
-    if (boardHTMLList[0].rows.length === 0) { createBoards(); }
+    if (boardHTMLList[0].rows.length === 0) { initializeGame(); }
     if (gameOver.every((e) => e)) { return; }
 
     if (keyPressed) {
@@ -60,14 +63,16 @@ function updateUI() {
         if (keyPressed === 'Enter') {
             checkForWinner();
         }
-
+        
         keyPressed = false;
     }
     
 }
 
-function createBoards() {
+function initializeGame() {
     
+    // create boards
+
     for (let boardHTML of boardHTMLList) {
 
         for(let i = 0; i < numAttempts; i++) {
@@ -85,23 +90,42 @@ function createBoards() {
     
     }
 
+    // create keyboardColors list
+
+    for (let i = 0; i < 26; i++) {
+        keyboardColors.push([
+            ['gray', 'gray', 'gray', 'gray', 'gray'],
+            ['gray', 'gray', 'gray', 'gray', 'gray'],
+            ['gray', 'gray', 'gray', 'gray', 'gray'],
+            ['gray', 'gray', 'gray', 'gray', 'gray']
+        ]);
+    }
+
 }
 
 function updateBoard() {
 
     let increaseIndex = false;
     let alreadyDecreasedIndex = false;
+    let key = keyPressed.replace('Key', '');
+    let alreadyAddedKey = false;
 
     for (let [index, boardHTML] of boardHTMLList.entries()) {
 
         if (gameOver[index]) { continue; }
-
+        
         let cells = boardHTML.rows[currentRowIndex].cells;
-        let key = keyPressed.replace('Key', '');
-            
+
         if (alphabetUppercase.includes(key)) {
+            
+            if (!alreadyAddedKey) {
+                currentWord += key;
+                alreadyAddedKey = true;
+            }
+
             cells[currentCellIndex].innerHTML = key;
             increaseIndex = true;
+
         }
 
         if (keyPressed === 'Backspace') {
@@ -131,6 +155,8 @@ function checkForWinner() {
     if (currentWord.length !== 5) { return; }
     if (!allWords.includes(currentWord)) { return; }
 
+    // boards
+
     for (let [index, correctWord] of correctWords.entries()) {
 
         if (gameOver[index]) { continue; }
@@ -149,16 +175,12 @@ function checkForWinner() {
             }
 
             boardHTMLList[index].rows[currentRowIndex].cells[i].style.backgroundColor = backgroundColor;
-            
-            // let correctKeyboardRowIndex;
-
-            // if ('qwertyuiop'.includes(letter)) { correctKeyboardRowIndex = 0; }
-            // if ('asdfghjkl' .includes(letter)) { correctKeyboardRowIndex = 1; }
-            // if ('zxcvbnm'   .includes(letter)) { correctKeyboardRowIndex = 2; }
-
-            // let keyboardIndex = alphabetRows[correctKeyboardRowIndex].indexOf(letter);
-            // let correctKeyboardRow = [keyboard1HTML, keyboard2HTML, keyboard3HTML][correctKeyboardRowIndex];
-            // correctKeyboardRow.rows[0].cells[keyboardIndex].style.backgroundColor = backgroundColor;
+        
+            let currentBackgroundColorRow = keyboardColors[alphabetLowercase.indexOf(letter)][index];
+            if ((backgroundColor === 'green') ||
+                (backgroundColor === 'yellow' && currentBackgroundColorRow[i] !== 'green')) {
+                currentBackgroundColorRow[i] = backgroundColor;
+            }
 
         }
 
@@ -170,6 +192,43 @@ function checkForWinner() {
 
     }
 
+    // keyboard
+
+    statusHTML.innerHTML = '';
+
+    for (let i = 0; i < 5; i++) {
+        
+        let letter = currentWord[i];
+        let correctKeyboardRowIndex;
+
+        // statusHTML.innerHTML += '<br>letter: ' + letter;
+        // statusHTML.innerHTML += '<br>colors: ' + keyboardColors[alphabetLowercase.indexOf(letter)];
+
+        if ('qwertyuiop'.includes(letter)) { correctKeyboardRowIndex = 0; }
+        if ('asdfghjkl' .includes(letter)) { correctKeyboardRowIndex = 1; }
+        if ('zxcvbnm'   .includes(letter)) { correctKeyboardRowIndex = 2; }
+
+        let keyboardIndex = alphabetRows[correctKeyboardRowIndex].indexOf(letter);
+        let correctKeyboardRow = [keyboard1HTML, keyboard2HTML, keyboard3HTML][correctKeyboardRowIndex]; 
+        
+        let color0 = keyboardColors[alphabetLowercase.indexOf(letter)][0][i];
+        let color1 = keyboardColors[alphabetLowercase.indexOf(letter)][1][i];
+        let color2 = keyboardColors[alphabetLowercase.indexOf(letter)][2][i];
+        let color3 = keyboardColors[alphabetLowercase.indexOf(letter)][3][i];
+        
+        // statusHTML.innerHTML += '<br>color 0: ' + keyboardColors[alphabetLowercase.indexOf(letter)][0][i];
+        // statusHTML.innerHTML += '<br>color 1: ' + keyboardColors[alphabetLowercase.indexOf(letter)][1][i];
+        // statusHTML.innerHTML += '<br>color 2: ' + keyboardColors[alphabetLowercase.indexOf(letter)][2][i];
+        // statusHTML.innerHTML += '<br>color 3: ' + keyboardColors[alphabetLowercase.indexOf(letter)][3][i];
+
+
+        correctKeyboardRow.rows[0].cells[keyboardIndex].style.background = `linear-gradient(to right, ${color0} 0 25%, ${color1} 25% 50%, ${color2} 50% 75%, ${color3} 75% 100%)`;
+
+
+    }
+
+    // check for game over
+
     if (gameOver.every((e) => e)) {
         statusHTML.innerHTML = 'you win! <br><br>';
     } else if (currentRowIndex === numAttempts-1) {
@@ -177,7 +236,7 @@ function checkForWinner() {
         for (let correctWord of correctWords) {
             statusHTML.innerHTML += `${correctWord}, `;
         }
-        statusHTML.innerHTML = `<br><br>`;
+        statusHTML.innerHTML += `<br><br>`;
     } else {
         currentRowIndex++;
         currentCellIndex = 0;
@@ -225,8 +284,12 @@ function checkForWinner() {
 
 function getCurrentWord() {
     currentWord = '';
-    for (const cell of boardHTMLList[0].rows[currentRowIndex].cells) {
-        currentWord += capitalToLowercase[cell.innerHTML];
+    for (let [index, boardHTML] of boardHTMLList.entries()) {
+        if (gameOver[index]) { continue; }
+        for (let cell of boardHTML.rows[currentRowIndex].cells) {
+            currentWord += capitalToLowercase[cell.innerHTML];
+        }
+        break;
     }
 }
 
