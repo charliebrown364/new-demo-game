@@ -1,9 +1,6 @@
 let boardHTMLList = [];
+let keyboardHTMLList = [];
 let statusHTML;
-let keyboard1HTML;
-let keyboard2HTML;
-let keyboard3HTML;
-let helpHTML;
 
 let alphabetUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 let alphabetLowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -34,7 +31,7 @@ let numAttempts = 10;
 // let getHelp = false;
 
 document.addEventListener("keydown", (e) => keyPressed = e.code);
-document.addEventListener("click", (e) => keyPressed = e.target.innerHTML);
+// document.addEventListener("click", (e) => keyPressed = e.target.innerHTML);
 
 function startGame() {
     setInterval(updateUI, 10);
@@ -48,11 +45,12 @@ function updateUI() {
         document.getElementById("board3"),
         document.getElementById("board4")
     ]
-    statusHTML    = document.getElementById("status");
-    keyboard1HTML = document.getElementById("keyboardRow1");
-    keyboard2HTML = document.getElementById("keyboardRow2");
-    keyboard3HTML = document.getElementById("keyboardRow3");
-    helpHTML      = document.getElementById("help");
+    keyboardHTMLList = [
+        document.getElementById("keyboardRow1"),
+        document.getElementById("keyboardRow2"),
+        document.getElementById("keyboardRow3")
+    ];
+    statusHTML = document.getElementById("status");
     
     if (!gameInitialized) {
         initializeGame();
@@ -65,7 +63,7 @@ function updateUI() {
 
         updateLetter();
 
-        statusHTML.innerHTML = `keyPressed: ${keyPressed}<br>`;
+        statusHTML.innerHTML += `keyPressed: ${keyPressed}<br>`;
         statusHTML.innerHTML += `currentWord: ${currentWord}<br>`;
         statusHTML.innerHTML += `currentWord.length == 5: ${currentWord.length == 5}<br>`;
         statusHTML.innerHTML += `allWords.includes(currentWord): ${allWords.includes(currentWord)}<br>`;
@@ -124,7 +122,10 @@ function updateLetter() {
     let increaseIndex = false;
     let alreadyDecreasedIndex = false;
     let key = keyPressed.replace('Key', '');
-    let alreadyAddedKey = false;
+    let letterToAdd = '';
+    let alreadyDeletedLetter = false;
+
+    statusHTML.innerHTML = '<br>';
 
     for (let [index, boardHTML] of boardHTMLList.entries()) {
 
@@ -134,9 +135,8 @@ function updateLetter() {
 
         if (alphabetUppercase.includes(key)) {
             
-            if (!alreadyAddedKey) {
-                currentWord += capitalToLowercase[key];
-                alreadyAddedKey = true;
+            if (letterToAdd === '') {
+                letterToAdd = capitalToLowercase[key];
             }
 
             cells[currentCellIndex].innerHTML = key;
@@ -146,9 +146,9 @@ function updateLetter() {
 
         if (keyPressed === 'Backspace') {
 
-            if (!alreadyAddedKey) {
+            if (currentWord !== '' && !alreadyDeletedLetter) {
                 currentWord = currentWord.slice(0, -1);
-                alreadyAddedKey = true;
+                alreadyDeletedLetter = true;
             }
 
             if (!alreadyDecreasedIndex) {
@@ -159,10 +159,11 @@ function updateLetter() {
             cells[currentCellIndex].innerHTML = ' ';
 
         }
-        
-        
+
     }
 
+    currentWord += letterToAdd;
+    
     if (increaseIndex) {
         currentCellIndex++;
     }
@@ -176,6 +177,7 @@ function updateWord() {
     for (let [index, correctWord] of correctWords.entries()) {
 
         if (gameOver[index]) { continue; }
+
         if (correctWord === currentWord) { gameOver[index] = true; }
 
         statusHTML.innerHTML += `start of index: ${index}<br>`;
@@ -232,7 +234,7 @@ function updateKeyboard() {
         if ('zxcvbnm'   .includes(letter)) { correctKeyboardRowIndex = 2; }
 
         let keyboardIndex = alphabetRows[correctKeyboardRowIndex].indexOf(letter);
-        let correctKeyboardRow = [keyboard1HTML, keyboard2HTML, keyboard3HTML][correctKeyboardRowIndex]; 
+        let correctKeyboardRow = keyboardHTMLList[correctKeyboardRowIndex]; 
 
         let colors = [];
 
