@@ -9,3 +9,4 @@ Games To Make
 - snake
 - 2048
 - minesweeper
+- spelunky
