@@ -1,0 +1,22 @@
+body {
+    background-color: #d9d9d9;
+}
+
+#title, #status {
+    text-align: center;
+}
+
+#title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#status {
+    font-size: 30px;
+}
+
+#game {
+    background-color: black;
+    width: 800px;
+    height: 800px;
+}
