@@ -1,8 +1,8 @@
 let gameInitialized = false;
 let player = new Player();
 
-document.addEventListener("keydown", (e) => { player.moving = e.code.replace('Key', ''); });
-document.addEventListener("keyup", () => { player.moving = false; });
+document.addEventListener("keydown", (e) => player.moving = e.code.replace('Key', ''));
+document.addEventListener("keyup", () => player.moving = false);
 
 function startGame() {
     setInterval(updateUI, 1);
@@ -19,10 +19,5 @@ function updateUI() {
     
 }
 
-function numToPx(n) {
-    return `${n}px`;
-}
-
-function PxToNum(px) {
-    return parseInt(px.replace('px', ''));
-}
+let numToPx = (n)  => `${n}px`;
+let PxToNum = (px) => parseInt(px.replace('px', ''));
