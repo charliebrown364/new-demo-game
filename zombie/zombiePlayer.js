@@ -5,8 +5,7 @@ class Player extends Thing {
         super("player", 0, 0, 50, 50, 'red');
 
         this.speed = 1;
-        this.moving = false;
-        this.hasStartedMoving = false;
+        this.moving = [];
 
     }
 
@@ -14,7 +13,6 @@ class Player extends Thing {
     
         if (this.moving) {
             this.changePosition();
-            this.hasStartedMoving = true;
         }
 
         let playerHTML = document.getElementById("player");
@@ -26,8 +24,8 @@ class Player extends Thing {
     changePosition() {
 
         let gameStyle  = getComputedStyle(document.querySelector('#game'));
-        let gameWidth  = PxToNum(gameStyle.width);
-        let gameHeight = PxToNum(gameStyle.height);
+        let gameWidth  = pxToNum(gameStyle.width);
+        let gameHeight = pxToNum(gameStyle.height);
 
         let canMoveLeft  = (0 < this.x);
         let canMoveUp    = (0 < this.y);
