@@ -2,17 +2,10 @@ body {
     background-color: #d9d9d9;
 }
 
-#title, #status {
-    text-align: center;
-}
-
 #title {
+    text-align: center;
     font-size: 30px;
     font-weight: bold;
-}
-
-#status {
-    font-size: 30px;
 }
 
 #game {

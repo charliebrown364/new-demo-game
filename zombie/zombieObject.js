@@ -1,4 +1,4 @@
-class Thing {
+export default class Thing {
 
     constructor(id, x, y, xSize, ySize, color) {
         this.id = id;
@@ -17,10 +17,10 @@ class Thing {
         thingHTML.id = this.id;
         
         thingHTML.style.position = 'relative';
-        thingHTML.style.top    = numToPx(this.y);
-        thingHTML.style.left   = numToPx(this.x);
-        thingHTML.style.width  = numToPx(this.xSize);
-        thingHTML.style.height = numToPx(this.ySize);
+        thingHTML.style.top    = `${this.y}px`;
+        thingHTML.style.left   = `${this.x}px`;
+        thingHTML.style.width  = `${this.xSize}px`;
+        thingHTML.style.height = `${this.ySize}px`;
         thingHTML.style.backgroundColor = this.color;
     
         gameHTML.appendChild(thingHTML);

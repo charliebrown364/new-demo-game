@@ -1,29 +1,12 @@
-let gameInitialized = false;
+import Player from "./zombiePlayer.js";
+
 let player = new Player();
+player.initialize();
 
-document.addEventListener("keydown", (e) => {
-    player.moving.push(keyToLetter(e));
-});
-
-document.addEventListener("keyup", (e) => {
-    player.moving = player.moving.filter(elem => elem !== keyToLetter(e));
-});
-
-function startGame() {
-    setInterval(updateUI, 1);
-}
+window.onload = () => setInterval(updateUI, 1);
+document.addEventListener("keydown", (e) => player.startMoving(e));
+document.addEventListener("keyup", (e) => player.stopMoving(e));
 
 function updateUI() {
-
-    if (!gameInitialized) {
-        player.initialize();
-        gameInitialized = true;
-    }
-
-    player.move();
-    
+    player.movement();
 }
-
-let numToPx = (n)  => `${n}px`;
-let pxToNum = (px) => parseInt(px.replace('px', ''));
-let keyToLetter = (e) => e.code.replace('Key', '');
