@@ -3,8 +3,7 @@ import Thing from "./zombieObject.js";
 export default class Player extends Thing {
 
     constructor() {
-        super("player", 0, 0, 50, 50, 'red');
-        this.speed = 1;
+        super("player", 0, 0, 50, 50, 'blue', 1, 100);
         this.moving = [];
     }
 
@@ -25,7 +24,7 @@ export default class Player extends Thing {
             this.changePosition();
         }
 
-        let playerHTML = document.getElementById("player");
+        let playerHTML = document.getElementById(this.id);
         playerHTML.style.top  = `${this.y}px`;
         playerHTML.style.left = `${this.x}px`;
 

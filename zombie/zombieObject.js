@@ -1,12 +1,17 @@
 export default class Thing {
 
-    constructor(id, x, y, xSize, ySize, color) {
+    constructor(id, x, y, xSize, ySize, color, speed, health) {
+
         this.id = id;
         this.x = x;
         this.y = y;
         this.xSize = xSize;
         this.ySize = ySize;
         this.color = color;
+
+        this.speed = speed;
+        this.health = health;
+
     }
 
     initialize() {
