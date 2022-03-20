@@ -5,28 +5,36 @@ export default class Player extends Thing {
     constructor() {
         super("player", 0, 0, 50, 50, 'blue', 1, 100);
         this.moving = [];
+        this.inventory = [];
+        this.currentWeapon = null;
     }
 
-    startMoving(e) {
-        let letter = e.code.replace('Key', '');
+    update(gameState) {
+        this.updateMovement();
+        this.updateWeapon(gameState);
+    }
+
+    startMoving(letter) {
         if (!this.moving.includes(letter)) {
             this.moving.push(letter);
         }
     }
 
-    stopMoving(e) {
-        this.moving = this.moving.filter(elem => elem !== e.code.replace('Key', ''));
+    stopMoving(letter) {
+        this.moving = this.moving.filter(elem => elem != letter);
     }
 
-    movement() {
-    
-        if (this.moving.length != 0) {
-            this.changePosition();
-        }
+    updateMovement() {
 
-        let playerHTML = document.getElementById(this.id);
-        playerHTML.style.top  = `${this.y}px`;
-        playerHTML.style.left = `${this.x}px`;
+        if (this.moving.length != 0) {
+
+            this.changePosition();
+
+            let playerHTML = document.getElementById(this.id);
+            playerHTML.style.top  = `${this.y}px`;
+            playerHTML.style.left = `${this.x}px`;
+
+        }
 
     }
 
@@ -35,50 +43,95 @@ export default class Player extends Thing {
         let gameStyle  = getComputedStyle(document.querySelector('#game'));
         let gameWidth  = parseInt(gameStyle.width.replace('px', ''));
         let gameHeight = parseInt(gameStyle.height.replace('px', ''));
+        
+        const CAN_MOVE_LEFT  = this.moving.includes('A') && !this.moving.includes('D') && (0 < this.x);
+        const CAN_MOVE_UP    = this.moving.includes('W') && !this.moving.includes('S') && (0 < this.y);
+        const CAN_MOVE_RIGHT = this.moving.includes('D') && !this.moving.includes('A') && (this.x + this.xSize < gameWidth);
+        const CAN_MOVE_DOWN  = this.moving.includes('S') && !this.moving.includes('W') && (this.y + this.ySize < gameHeight);
 
-        let canMoveLeft  = (0 < this.x);
-        let canMoveUp    = (0 < this.y);
-        let canMoveRight = (this.x + this.xSize < gameWidth);
-        let canMoveDown  = (this.y + this.ySize < gameHeight);
+        const DIAG_SPEED = this.speed * Math.sqrt(2) / 2;
 
-        const DIAG_MULT = Math.sqrt(2) / 2;
-
-        if (this.moving.includes('A') && this.moving.length == 1 && canMoveLeft) {
-            this.x -= this.speed;
+        if (CAN_MOVE_UP && CAN_MOVE_LEFT) {
+            this.x -= DIAG_SPEED;
+            this.y -= DIAG_SPEED;
         }
         
-        if (this.moving.includes('A') && this.moving.includes('W')) {
-            if (canMoveLeft) { this.x -= this.speed * DIAG_MULT; }
-            if (canMoveUp)   { this.y -= this.speed * DIAG_MULT; }
+        else if (CAN_MOVE_UP && CAN_MOVE_RIGHT) {
+            this.x += DIAG_SPEED;
+            this.y -= DIAG_SPEED;
         }
         
-        if (this.moving.includes('W') && this.moving.length == 1 && canMoveUp) {
+        else if (CAN_MOVE_DOWN && CAN_MOVE_LEFT) {
+            this.x -= DIAG_SPEED;
+            this.y += DIAG_SPEED;
+        }
+        
+        else if (CAN_MOVE_DOWN && CAN_MOVE_RIGHT) {
+            this.x += DIAG_SPEED;
+            this.y += DIAG_SPEED;
+        }
+        
+        else if (CAN_MOVE_UP) {
             this.y -= this.speed;
         }
         
-        if (this.moving.includes('W') && this.moving.includes('D')) {
-            if (canMoveUp)    { this.y -= this.speed * DIAG_MULT; }
-            if (canMoveRight) { this.x += this.speed * DIAG_MULT; }
-        }
-
-        if (this.moving.includes('D') && this.moving.length == 1 && canMoveRight) {
-            this.x += this.speed;
-        }
-        
-        if (this.moving.includes('D') && this.moving.includes('S')) {
-            if (canMoveRight) { this.x += this.speed * DIAG_MULT; }
-            if (canMoveDown)  { this.y += this.speed * DIAG_MULT; }
-        }
-        
-        if (this.moving.includes('S') && this.moving.length == 1 && canMoveDown) {
+        else if (CAN_MOVE_DOWN) {
             this.y += this.speed;
         }
         
-        if (this.moving.includes('S') && this.moving.includes('A')) {
-            if (canMoveDown) { this.y += this.speed * DIAG_MULT; }
-            if (canMoveLeft) { this.x -= this.speed * DIAG_MULT; }
+        else if (CAN_MOVE_LEFT) {
+            this.x -= this.speed;
         }
         
+        else if (CAN_MOVE_RIGHT) {
+            this.x += this.speed;
+        
+        }
+
+    }
+
+    pickUpItem(gameState) {
+    
+        for (let weapon of gameState['weaponsList']) {
+            
+            const DIST = Math.sqrt((this.x - weapon.x) ** 2 + (this.y - weapon.y) ** 2);
+            
+            if (weapon.location == 'ground' && DIST <= 50) {
+
+                if (this.inventory.length == 0) {
+                    this.currentWeapon = weapon;
+                }
+
+                this.inventory.push(weapon);
+                weapon.location = 'inventory';
+
+                let weaponHTML = document.getElementById(weapon.id);
+                weaponHTML.classList.remove("ground-weapon");
+                weaponHTML.classList.add("inventory-weapon");
+
+            }
+        
+        }
+      
+    }
+
+    updateWeapon(gameState) {
+        
+        for (let weapon of gameState['weaponsList']) {
+            if (weapon.location == 'inventory') {
+
+                let weaponHTML = document.getElementById(weapon.id);
+
+                if (weapon === this.currentWeapon) {
+                    weaponHTML.style.top  = `${this.y}px`;
+                    weaponHTML.style.left = `${this.x}px`;
+                } else {
+                    weaponHTML.style.visibility = 'hidden';
+                }
+
+            }
+        }
+
     }
 
 }

@@ -16,19 +16,18 @@ export default class Thing {
 
     initialize() {
 
-        let gameHTML = document.getElementById("game");
         let thingHTML = document.createElement("div");
     
         thingHTML.id = this.id;
         
-        thingHTML.style.position = 'relative';
+        thingHTML.style.position = 'absolute';
         thingHTML.style.top    = `${this.y}px`;
         thingHTML.style.left   = `${this.x}px`;
         thingHTML.style.width  = `${this.xSize}px`;
         thingHTML.style.height = `${this.ySize}px`;
         thingHTML.style.backgroundColor = this.color;
     
-        gameHTML.appendChild(thingHTML);
+        document.getElementById("game").appendChild(thingHTML);
 
     }
 
