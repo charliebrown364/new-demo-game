@@ -109,6 +109,8 @@ export default class Player extends Thing {
                 weaponHTML.classList.remove("ground-weapon");
                 weaponHTML.classList.add("inventory-weapon");
 
+                document.getElementById("inventory").innerHTML += ` ${weapon.id}`;
+
             }
         
         }

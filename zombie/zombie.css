@@ -14,3 +14,8 @@ body {
     height: 400px;
     position: absolute;
 }
+
+#inventory {
+    top: 500px;
+    position: absolute;
+}

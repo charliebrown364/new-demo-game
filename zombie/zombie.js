@@ -1,17 +1,23 @@
 import Player from "./zombiePlayer.js";
 import Zombie from "./zombieZombie.js";
 import Pistol from "./zombieWeapon.js";
+import Bullet from "./zombieBullet.js";
 
 let player = new Player();
 let zombie = new Zombie();
 
 let gameState = {
-    'weaponsList': []
+    'weaponsList': [],
+    'bulletList': []
 }
 
 initialize();
 
 window.onload = () => setInterval(updateUI, 1);
+
+document.addEventListener("click", (e) => {
+    new Bullet(player, gameState);
+});
 
 document.addEventListener("keydown", (e) => {
     let letter = keyToLetter(e);

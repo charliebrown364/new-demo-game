@@ -25,7 +25,7 @@ export default class Zombie extends Thing {
     changePosition() {
 
         const OPPOSITE = Math.abs(this.player.y - this.y);
-        const HYPOTENUSE = Math.sqrt((this.player.x - this.x) ** 2 + (this.player.y - this.y) ** 2)
+        const HYPOTENUSE = Math.sqrt((this.player.x - this.x) ** 2 + (this.player.y - this.y) ** 2);
         const SIN = OPPOSITE / HYPOTENUSE;
         const COS = Math.cos(Math.asin(SIN));
 
