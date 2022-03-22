@@ -4,12 +4,15 @@ import Pistol from "./zombieWeapon.js";
 import Bullet from "./zombieBullet.js";
 
 let player = new Player();
-let zombie = new Zombie();
 
 let gameState = {
     'weaponsList': [],
-    'bulletList': []
-}
+    'bulletList': [],
+    'zombieList': [
+        new Zombie()
+    ],
+    'bulletCounter': 0
+};
 
 initialize();
 
@@ -30,14 +33,21 @@ document.addEventListener("keyup", (e) => {
 });
 
 function initialize() {
-    player.initialize();
-    zombie.initialize();
     spawnWeapon();
 }
 
 function updateUI() {
+
     player.update(gameState);
-    zombie.update(player);
+
+    for (let zombie of gameState['zombieList']) {
+        zombie.update(player);
+    }
+
+    for (let i = 0; i < gameState['bulletList'].length; i++) {
+        gameState['bulletList'][i].update(gameState, i);
+    }
+
 }
 
 function spawnWeapon() {

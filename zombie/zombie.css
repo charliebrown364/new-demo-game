@@ -10,12 +10,12 @@ body {
 
 #game {
     background-color: black;
-    width: 400px;
-    height: 400px;
+    width: 800px;
+    height: 800px;
     position: absolute;
 }
 
 #inventory {
-    top: 500px;
+    top: 900px;
     position: absolute;
 }

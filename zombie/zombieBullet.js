@@ -2,23 +2,30 @@ export default class Bullet {
   
     constructor(player, gameState) {
 
-        this.x = player.x;
-        this.y = player.y;
+        this.id = null;
+        this.size = 10;
+        this.x = player.x + (player.xSize - this.size) / 2;
+        this.y = player.y + (player.ySize - this.size) / 2;
         this.xDir = null;
         this.yDir = null;
-        this.size = 10;
-        this.speed = 10;
+        this.speed = 5;
 
-        this.fit(gameState);
+        this.create(gameState);
         
     }
 
-    fit(gameState) {
+    create(gameState) {
 
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
+        gameState['bulletCounter']++;
+        this.id = `bullet ${gameState['bulletCounter']}`
 
-        const OPPOSITE = Math.abs(mouseX - this.y);
+        // JS
+
+        let bounds = document.getElementById("game").getBoundingClientRect();
+        const mouseX = event.clientX - bounds.left;
+        const mouseY = event.clientY - bounds.top;
+
+        const OPPOSITE = Math.abs(mouseY - this.y);
         const HYPOTENUSE = Math.sqrt((mouseX - this.x) ** 2 + (mouseY - this.y) ** 2);
         const SIN = OPPOSITE / HYPOTENUSE;
         const COS = Math.cos(Math.asin(SIN));
@@ -36,7 +43,23 @@ export default class Bullet {
             this.yDir = -1 * this.speed * SIN;
         }
         
-        gameState['existingBullets'].push(this);
+        gameState['bulletList'].push(this);
+
+        // HTML & CSS
+
+        let bulletHTML = document.createElement("div");
+        
+        bulletHTML.className = 'bullet';
+        bulletHTML.id = this.id;
+
+        bulletHTML.style.position = 'absolute';
+        bulletHTML.style.top    = `${this.y}px`;
+        bulletHTML.style.left   = `${this.x}px`;
+        bulletHTML.style.width  = `${this.size}px`;
+        bulletHTML.style.height = `${this.size}px`;
+        bulletHTML.style.backgroundColor = 'orange';
+
+        document.getElementById("game").appendChild(bulletHTML);
         
     }
 
@@ -51,41 +74,33 @@ export default class Bullet {
         
         if (XonScreen && YonScreen) {
             
-            let bulletHTML = document.createElement("div");
-    
-            bulletHTML.className = 'bullet';
-            
-            bulletHTML.style.position = 'absolute';
-            bulletHTML.style.top    = `${this.y}px`;
-            bulletHTML.style.left   = `${this.x}px`;
-            bulletHTML.style.width  = `${this.size}px`;
-            bulletHTML.style.height = `${this.size}px`;
-            bulletHTML.style.backgroundColor = 'orange';
-        
-            document.getElementById("game").appendChild(bulletHTML);
-
             this.x += this.xDir;
             this.y += this.yDir;
+
+            let bulletHTML = document.getElementById(this.id);
+            bulletHTML.style.top  = `${this.y}px`;
+            bulletHTML.style.left = `${this.x}px`;
             
         } else {
-            gameState['existingBullets'].splice(i, 1);
+            gameState['bulletList'].splice(i, 1);
+            document.getElementById(this.id).remove();
         }
       
     }
     
-    attack() {
+    // attack(gameState) {
       
-        for (var zombie of existingZombies) {
+    //     for (let zombie of gameState['zombieList']) {
             
-            let XinZombieX = zombie.x - 15 < this.x && this.x < zombie.x + 15;
-            let YinZombieY = zombie.y - 15 < this.y && this.y < zombie.y + 15;
+    //         let XinZombieX = zombie.x - 15 < this.x && this.x < zombie.x + 15;
+    //         let YinZombieY = zombie.y - 15 < this.y && this.y < zombie.y + 15;
             
-            if (XinZombieX && YinZombieY) {
-                zombie.health -= this.damage;
-            }
+    //         if (XinZombieX && YinZombieY) {
+    //             zombie.health -= this.damage;
+    //         }
             
-        }
+    //     }
       
-    }
+    // }
     
   }

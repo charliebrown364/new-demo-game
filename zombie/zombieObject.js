@@ -12,6 +12,8 @@ export default class Thing {
         this.speed = speed;
         this.health = health;
 
+        this.initialize();
+
     }
 
     initialize() {
