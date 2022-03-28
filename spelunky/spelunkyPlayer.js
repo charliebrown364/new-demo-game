@@ -1,12 +1,30 @@
 import Thing from "./spelunkyThing.js";
 
+const GRAVITY = 2.5;
+
 export default class Player extends Thing {
 
     constructor() {
-        super("player", 0, 0, 0, 0, 50, 50, 'blue');
+
+        super(
+            "player", // id
+            0, // x
+            0, // y
+            0, // xBlock
+            0, // yBlock
+            50, // xSize
+            50, // ySize
+            'blue' // color
+        );
+
         this.speed = 1;
         this.moving = [];
-        this.gameState = null;
+
+        this.goingUp = false;
+        this.goingDown = false;
+        this.goingUpTimer = false;
+        this.goingDownTimer = false;
+
     }
 
     startMoving(letter) {
@@ -21,8 +39,6 @@ export default class Player extends Thing {
 
     updateMovement(gameState) {
 
-        gameState['onGround'] = this.onGround(gameState);
-
         this.changePosition(gameState);
 
         this.xBlock = Math.floor(this.x / 50);
@@ -30,46 +46,81 @@ export default class Player extends Thing {
 
         let playerHTML = document.getElementById(this.id);
         playerHTML.style.left = `${this.x}px`;
-        playerHTML.style.top = `${this.y}px`;
+        playerHTML.style.top  = `${this.y}px`;
         
     }
 
     changePosition(gameState) {
         
-        if (gameState['onGround']) {
-            
-            const CAN_MOVE_LEFT  = this.moving.includes('ArrowLeft') && !this.moving.includes('ArrowRight');
-            const CAN_MOVE_RIGHT = this.moving.includes('ArrowRight') && !this.moving.includes('ArrowLeft');
+        // horizontal movement
         
-            if (CAN_MOVE_LEFT) {
-                this.x -= this.speed;
-            } else if (CAN_MOVE_RIGHT) {
-                this.x += this.speed;
+        const CAN_MOVE_LEFT  = this.moving.includes('ArrowLeft')  && !this.moving.includes('ArrowRight') && this.x != 0;
+        const CAN_MOVE_RIGHT = this.moving.includes('ArrowRight') && !this.moving.includes('ArrowLeft')  && this.x != 450;
+
+        if (CAN_MOVE_LEFT && this.canMoveLeft(gameState)) {
+            this.x -= this.speed;
+        } else if (CAN_MOVE_RIGHT && this.canMoveRight(gameState)) {
+            this.x += this.speed;
+        }
+
+        // jumping
+
+        const CAN_MOVE_UP   = this.canMoveUp(gameState);
+        const CAN_MOVE_DOWN = this.canMoveDown(gameState);
+
+        if (this.moving.includes('ArrowUp') && !this.goingUp && !this.goingDown) {
+            this.goingUp = true;
+        }
+
+        if (this.goingUp) {
+            
+            this.y -= 2 * GRAVITY;
+            
+            if (!this.goingUpTimer) {
+                this.goingUpTimer = true;
+                setTimeout(() => {
+                    this.goingUp = false;
+                    this.goingUpTimer = false;
+                    this.goingDown = true;
+                }, 200);
+            }
+        
+        }
+
+        if (this.goingDown && CAN_MOVE_DOWN) {
+
+            if (!this.goingDownTimer) {
+                this.goingDownTimer = true;
+                setTimeout(() => {
+                    this.goingDown = false;
+                    this.goingDownTimer = false;
+                }, 200);
             }
 
-        } else {
-            this.y += 1;
+        }
+
+        // gravity
+
+        if (CAN_MOVE_DOWN) {
+            this.y += GRAVITY;
         }
 
     }
 
-    onGround(gameState) {
+    canMoveUp(gameState) {
+        return gameState['blockArray'][Math.max(0, this.yBlock - 1)][this.xBlock] == '';
+    }
 
-        for (let i = 0; i < 16; i++) {
-            for (let j = 0; j < 16; j++) {
+    canMoveDown(gameState) {
+        return gameState['blockArray'][this.yBlock + 1][this.xBlock] == '';
+    }
 
-                let block = gameState['blockArray'][i][j];
-                if (!block) continue;
+    canMoveLeft(gameState) {
+        return gameState['blockArray'][this.yBlock][this.xBlock] == '';
+    }
 
-                if (this.yBlock + 1 == block.yBlock) {
-                    return true;
-                }
-
-            }
-        }
-
-        return false;
-
+    canMoveRight(gameState) {
+        return gameState['blockArray'][this.yBlock][this.xBlock + 1] == '';
     }
 
 }

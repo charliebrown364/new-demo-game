@@ -5,12 +5,11 @@ export default class Thing {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.xBlock = xBlock;
+        this.yBlock = yBlock;
         this.xSize = xSize;
         this.ySize = ySize;
         this.color = color;
-
-        this.xBlock = xBlock;
-        this.yBlock = yBlock;
 
         this.initialize();
 
