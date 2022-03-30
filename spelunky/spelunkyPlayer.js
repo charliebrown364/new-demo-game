@@ -1,6 +1,6 @@
 import Thing from "./spelunkyThing.js";
 
-const GRAVITY = 2.5;
+const GRAVITY = 1;
 
 export default class Player extends Thing {
 
@@ -12,8 +12,8 @@ export default class Player extends Thing {
             0, // y
             0, // xBlock
             0, // yBlock
-            30, // xSize
-            30, // ySize
+            40, // xSize
+            40, // ySize
             'blue' // color
         );
 
@@ -21,10 +21,10 @@ export default class Player extends Thing {
         this.moving = [];
         this.coordsIn = [];
 
-        this.goingUp = false;
-        this.goingDown = false;
-        this.goingUpTimer = false;
-        this.goingDownTimer = false;
+        this.jumping = false;
+        this.jumpTarget = 0;
+        this.jumpFalling = false;
+        this.fallingVelocity = 0;
 
     }
 
@@ -84,42 +84,25 @@ export default class Player extends Thing {
 
         const CAN_MOVE_UP   = this.canMoveUp(gameState);
         const CAN_MOVE_DOWN = this.canMoveDown(gameState);
+        const JUMP_HEIGHT = 3 * this.ySize;
 
-        if (this.moving.includes('ArrowUp') && !this.goingUp && !this.goingDown && !CAN_MOVE_DOWN) {
-            this.goingUp = true;
+        if (this.moving.includes('ArrowUp') && !this.jumping && !this.jumpFalling && !CAN_MOVE_DOWN) {
+            this.jumping = true;
+            this.jumpTarget = this.y - JUMP_HEIGHT;
         }
 
-        if (this.goingUp && CAN_MOVE_UP) {
+        if (this.jumping) {
             
-            if (this.y > 0) this.y -= 2 * GRAVITY;
-            
-            if (!this.goingUpTimer) {
-                this.goingUpTimer = true;
-                setTimeout(() => {
-                    this.goingUp = false;
-                    this.goingUpTimer = false;
-                    this.goingDown = true;
-                }, 200);
+            if (CAN_MOVE_UP && this.y > 0 && this.y > this.jumpTarget) {
+                this.y -= GRAVITY; // add acceleration
+            } else {
+                this.jumping = false;
+                this.jumpFalling = true;
             }
         
-        }
-
-        if (this.goingDown && CAN_MOVE_DOWN) {
-
-            if (!this.goingDownTimer) {
-                this.goingDownTimer = true;
-                setTimeout(() => {
-                    this.goingDown = false;
-                    this.goingDownTimer = false;
-                }, 200);
-            }
-
-        }
-
-        // gravity
-
-        if (CAN_MOVE_DOWN) {
-            this.y += GRAVITY;
+        } else { // gravity
+            if (CAN_MOVE_DOWN) this.y += GRAVITY; // add acceleration
+            else this.jumpFalling = false;
         }
 
     }
