@@ -27,6 +27,7 @@ export default class Thing {
         thingHTML.style.width  = `${this.xSize}px`;
         thingHTML.style.height = `${this.ySize}px`;
         thingHTML.style.backgroundColor = this.color;
+        thingHTML.style.outline = `1px solid green`;
     
         document.getElementById("game").appendChild(thingHTML);
 
