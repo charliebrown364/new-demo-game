@@ -107,7 +107,7 @@ function checkForWinner() {
     ];
 
     for (let arr of winningOptions) {
-        if (arr[0] === arr[1] && arr[1] === arr[2] && arr[0] == arr[2]) {
+        if (arr[0] && arr[0] === arr[1] && arr[1] === arr[2] && arr[0] == arr[2]) {
             gameOver = true;
             statusHTML.innerHTML = `${turn} wins!`;
             break;

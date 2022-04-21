@@ -1,0 +1,32 @@
+body {
+    background-color: rgb(184, 235, 248);
+}
+
+#title, #status {
+    text-align: center;
+}
+
+#title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#status {
+    font-size: 20px;
+}
+
+td.square, td.mine {
+    width: 50px;
+    height: 50px;
+    table-layout: fixed;
+    text-align: center;
+    border: 1px solid black;
+}
+
+td.square {
+    background-color: gray;
+}
+
+td.mine {
+    background-color: red;
+}
