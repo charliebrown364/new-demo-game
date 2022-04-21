@@ -3,10 +3,9 @@ Games Made
 - connect 4
 - wordle (w/out word API)
 - hangman
+- minesweeper
 
 Games To Make
 - ultimate tic tac toe
 - snake
 - 2048
-- minesweeper
-- spelunky
