@@ -43,7 +43,11 @@ function updateUI() {
 
     checkForWinner();
 
-    clickedSquare.type = null;
+    clickedSquare = {
+        type: null,
+        x: null,
+        y: null
+    };
 
 }
 
@@ -99,8 +103,15 @@ function fillBoard() {
         if (square.classList.contains('mine')) { continue; }
 
         if (!gameStarted) {
-            makeInitialSquaresSafe();
+
             gameStarted = true;
+
+            for (let coord of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
+                let square = boardHTML.rows[coord[0]].cells[coord[1]];
+                square.classList.remove('hidden');
+                square.classList.add('clickedSquare');
+            }
+
         } else {
             square.classList.add('mine');
             numMinesPlaced++;
@@ -108,9 +119,14 @@ function fillBoard() {
         
     }
 
+    statusHTML.innerHTML += 'before surroundingCoords <br>';
+
     for (let coord of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
+        statusHTML.innerHTML += `${coord}<br>`;
         let square = boardHTML.rows[coord[0]].cells[coord[1]];
+        statusHTML.innerHTML += 'before numMinesAround <br>';
         let numMinesAroundSquare = numMinesAround(coord[0], coord[1]);
+        statusHTML.innerHTML += 'after numMinesAround <br>';
         square.innerHTML = numMinesAroundSquare != 0 ? numMinesAroundSquare : '';
         square.classList.add('clickedSquare');
     }
@@ -118,7 +134,7 @@ function fillBoard() {
     // while there are .clickedSquare:not(.hidden) that have both
     // 0 mines around them AND hidden squares around them, reveal that square
 
-    // doesnt work right now
+    statusHTML.innerHTML += 'before squareCoordsToReveal <br>';
 
     let squareCoordsToReveal = [];
 
@@ -128,90 +144,115 @@ function fillBoard() {
             if (square.classList.contains('clickedSquare') &&
                 square.innerHTML === '') {
                 squareCoordsToReveal.push([i, j]);
+                statusHTML.innerHTML += 'hello ';
             }
         }
     }
 
-    while (squareCoordsToReveal.length !== 0) {
+    statusHTML.innerHTML += '<br>before squareCoordsToReveal while loop <br>';
 
-        for (let elem of squareCoordsToReveal) {
-            statusHTML.innerHTML += `${elem}, `;
+    let goAgain = true;
+
+    while (goAgain) {
+
+        goAgain = false;
+
+        for (let coords of squareCoordsToReveal) {
+                
+            for (let [i, j] of getSurroundingCoords(coords[0], coords[1])) {
+                
+                let surroundingSquare = boardHTML.rows[i].cells[j];
+
+                if (!surroundingSquare.classList.contains('mine') && numMinesAround(i, j) === 0) {
+                    squareCoordsToReveal.push([i, j]);
+                    goAgain = true;
+                }
+
+            }
+
         }
-        statusHTML.innerHTML += `hello<br>`;
+    
+    }
 
-        let newCoordsToReveal = [];
+    statusHTML.innerHTML += 'statusHTML.innerHTML: <br>';
+    for (let elem of squareCoordsToReveal) {
+        statusHTML.innerHTML += `${elem}<br>`;
+    }
 
-        for (let squareCoordToReveal of squareCoordsToReveal) {
+    for (let [i, j] of squareCoordsToReveal) {
+        revealSquare(i, j);
+    }
 
-            let i = squareCoordToReveal[0];
-            let j = squareCoordToReveal[1];
-            let square = boardHTML.rows[i].cells[j];
+    // while (squareCoordsToReveal.length !== 0) {
 
-            let numSurroundingHiddenSquares = [];
-            for (let coord of getSurroundingCoords(i, j)) {
-                let surroundingSquare = boardHTML.rows[coord[0]].cells[coord[1]]
-                if ((coord[0] !== i || coord[1] !== j) && surroundingSquare.classList.contains('hidden')) {
-                    numSurroundingHiddenSquares ++;
-                    if (!squareCoordsToReveal.includes(coord) && !newCoordsToReveal.includes(coord)) {
-                        newCoordsToReveal.push(coord);
-                    }
-                }
+    //     for (let elem of squareCoordsToReveal) {
+    //         statusHTML.innerHTML += `${elem}, `;
+    //     }
+    //     statusHTML.innerHTML += `hello<br>`;
 
-            }
+    //     let newCoordsToReveal = [];
 
-            if (!square.classList.contains('hidden')) { continue; }
+    //     for (let squareCoordToReveal of squareCoordsToReveal) {
 
-            if (square.innerHTML === '' && numSurroundingHiddenSquares > 0) {
+    //         let i = squareCoordToReveal[0];
+    //         let j = squareCoordToReveal[1];
+    //         let square = boardHTML.rows[i].cells[j];
 
-                revealSquare(i, j);
+    //         let numSurroundingHiddenSquares = [];
+    //         for (let coord of getSurroundingCoords(i, j)) {
+    //             let surroundingSquare = boardHTML.rows[coord[0]].cells[coord[1]]
+    //             if ((coord[0] !== i || coord[1] !== j) && surroundingSquare.classList.contains('hidden')) {
+    //                 numSurroundingHiddenSquares ++;
+    //                 if (!squareCoordsToReveal.includes(coord) && !newCoordsToReveal.includes(coord)) {
+    //                     newCoordsToReveal.push(coord);
+    //                 }
+    //             }
 
-                for (let k = 0; k < newCoordsToReveal.length; k++) {
-                    if (listsAreEqual([i, j], newCoordsToReveal[k])) {
-                        newCoordsToReveal.splice(k, 1);
-                    }
-                }
+    //         }
 
-            }
+    //         if (!square.classList.contains('hidden')) { continue; }
 
-            // let numSurroundingHiddenSquares = [];
+    //         if (square.innerHTML === '' && numSurroundingHiddenSquares > 0) {
 
-            // for (let coord of getSurroundingCoords(i, j)) {
+    //             revealSquare(i, j);
 
-            //     if (coord[0] !== i && coord[1] !== j && boardHTML.rows[coord[0]].cells[coord[1]].classList.contains('hidden')) {
+    //             for (let k = 0; k < newCoordsToReveal.length; k++) {
+    //                 if (listsAreEqual([i, j], newCoordsToReveal[k])) {
+    //                     newCoordsToReveal.splice(k, 1);
+    //                 }
+    //             }
+
+    //         }
+
+    //         // let numSurroundingHiddenSquares = [];
+
+    //         // for (let coord of getSurroundingCoords(i, j)) {
+
+    //         //     if (coord[0] !== i && coord[1] !== j && boardHTML.rows[coord[0]].cells[coord[1]].classList.contains('hidden')) {
                     
-            //         numSurroundingHiddenSquares ++;
+    //         //         numSurroundingHiddenSquares ++;
 
-            //         if (!squareCoordsToReveal.includes(coord)) {
-            //             squareCoordsToReveal.push(coord);
-            //         }
+    //         //         if (!squareCoordsToReveal.includes(coord)) {
+    //         //             squareCoordsToReveal.push(coord);
+    //         //         }
 
-            //     }
+    //         //     }
 
-            // }
+    //         // }
 
-            // if (square.classList.contains('clickedSquare') &&
-            //     !square.classList.contains('mine') &&
-            //     !square.classList.contains('hidden') && 
-            //     square.innerHTML === '' &&
-            //     numSurroundingHiddenSquares > 0) {
-            //         revealSquare(i, j);
-            // }
+    //         // if (square.classList.contains('clickedSquare') &&
+    //         //     !square.classList.contains('mine') &&
+    //         //     !square.classList.contains('hidden') && 
+    //         //     square.innerHTML === '' &&
+    //         //     numSurroundingHiddenSquares > 0) {
+    //         //         revealSquare(i, j);
+    //         // }
 
-        }
+    //     }
 
-        squareCoordsToReveal = [...newCoordsToReveal];
+    //     squareCoordsToReveal = [...newCoordsToReveal];
         
-    }
-
-}
-
-function makeInitialSquaresSafe() {
-
-    for (let coord of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
-        let square = boardHTML.rows[coord[0]].cells[coord[1]];
-        square.classList.remove('hidden');
-        square.classList.add('clickedSquare');
-    }
+    // }
 
 }
 
@@ -259,24 +300,35 @@ function checkForWinner() {
 function numMinesAround(i, j) {
 
     let isASquare = (a, b) => boardHTML.rows[a].cells[b].classList.contains('mine');
+    
+    statusHTML.innerHTML += 'getSurroundingCoords(i, j): <br>';
+    for (let elem of getSurroundingCoords(i, j)) {
+        statusHTML.innerHTML += `${elem}<br>`;
+    }
 
-    let bools = [
-        i != 0              && j != 0              && isASquare(i-1, j-1),
-        i != 0                                     && isASquare(i-1, j),
-        i != 0              && j != BOARD_SIZE - 1 && isASquare(i-1, j+1),
-                               j != 0              && isASquare(i, j-1),
-                               j != BOARD_SIZE - 1 && isASquare(i, j+1),
-        i != BOARD_SIZE - 1 && j != 0              && isASquare(i+1, j-1),
-        i != BOARD_SIZE - 1                        && isASquare(i+1, j),
-        i != BOARD_SIZE - 1 && j != BOARD_SIZE - 1 && isASquare(i+1, j+1)
-    ]
+    return getSurroundingCoords(i, j).filter((a, b) => isASquare(a, b)).length;
 
-    return bools.filter((elem) => elem).length;
+    // let bools = [
+    //     i != 0              && j != 0              && isASquare(i-1, j-1),
+    //     i != 0                                     && isASquare(i-1, j),
+    //     i != 0              && j != BOARD_SIZE - 1 && isASquare(i-1, j+1),
+    //                            j != 0              && isASquare(i, j-1),
+    //                            j != BOARD_SIZE - 1 && isASquare(i, j+1),
+    //     i != BOARD_SIZE - 1 && j != 0              && isASquare(i+1, j-1),
+    //     i != BOARD_SIZE - 1                        && isASquare(i+1, j),
+    //     i != BOARD_SIZE - 1 && j != BOARD_SIZE - 1 && isASquare(i+1, j+1)
+    // ]
+
+    // let bools = [];
+    // for (let coord of getSurroundingCoords(i, j)) {
+    //     bools.push(isASquare(coord[0], coord[1]));
+    // }
 
 }
 
 function getSurroundingCoords(i, j) {
-    return [
+
+    let allPossibleCoords = [
         [i - 1, j - 1],
         [i - 1, j    ],
         [i - 1, j + 1],
@@ -287,6 +339,17 @@ function getSurroundingCoords(i, j) {
         [i + 1, j    ],
         [i + 1, j + 1]
     ];
+
+    let surroundingCoords = [];
+
+    for (let [a, b] of allPossibleCoords) {
+        if (0 <= a && a <= BOARD_SIZE - 1 && 0 <= b && b <= BOARD_SIZE - 1) {
+            surroundingCoords.push([a, b]);
+        }
+    }
+
+    return surroundingCoords;
+
 }
 
 function randomInteger(min, max) {
