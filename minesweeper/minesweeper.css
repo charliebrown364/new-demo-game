@@ -12,6 +12,9 @@ body {
 }
 
 #status {
+    position: absolute;
+    left: 600px;
+    top: 50px;
     font-size: 20px;
 }
 
