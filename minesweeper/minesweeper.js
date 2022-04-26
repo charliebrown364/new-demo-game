@@ -1,5 +1,5 @@
 const BOARD_SIZE = 10;
-const NUM_MINES = 20;
+const NUM_MINES = 25;
 
 let gameStarted = false;
 let gameOver = false;
@@ -85,12 +85,12 @@ function fillBoard() {
         }
     }
 
-    placeMines();
+    placeMinesAndInitialSquares();
     revealSurroundingSquares(clickedSquare.x, clickedSquare.y);
 
 }
 
-function placeMines() {
+function placeMinesAndInitialSquares() {
 
     let numMinesPlaced = 0;
 
@@ -107,9 +107,8 @@ function placeMines() {
 
             gameStarted = true;
 
-            for (let coord of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
-                let square = boardHTML.rows[coord[0]].cells[coord[1]];
-                revealSquare(square);
+            for (let [i, j] of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
+                revealSquare(i, j);
             }
 
         } else {
@@ -129,27 +128,21 @@ function revealSurroundingSquares(x, y) {
         let newSquareCoordsToReveal = [];
         for (let [i, j] of squareCoordsToReveal) {
             
-            let square = boardHTML.rows[i].cells[j];
-            revealSquare(square);
+            revealSquare(i, j);
             addNumMinesAround(i, j);
 
-            if (numMinesAround(i, j) == 0 && !isAMine(i, j)) {
+            if (numMinesAround(i, j) === 0 && !isAMine(i, j)) {
+
                 for (let [si, sj] of getSurroundingCoords(i, j)) {
-                    if (si != i || sj != j) {
 
-                        let surroundingSquare = boardHTML.rows[si].cells[sj];
-                        
-                        if (!isAClickedSquare(si, sj) && !isAMine(si, sj)) {
-                            
-                            revealSquare(square);
-                            addNumMinesAround(i, j);
-
-                            newSquareCoordsToReveal.push([si, sj]);
-
-                        }
-
+                    if ((si != i || sj != j) && !isAClickedSquare(si, sj) && !isAMine(si, sj)) {                   
+                        revealSquare(i, j);
+                        addNumMinesAround(i, j);
+                        newSquareCoordsToReveal.push([si, sj]);
                     }
+
                 }
+
             }
 
         }
@@ -160,15 +153,14 @@ function revealSurroundingSquares(x, y) {
 
 function clickSquare(i, j) {
 
-    let square = boardHTML.rows[i].cells[j];
-    revealSquare(square);
+    revealSquare(i, j);
 
     if (isAMine(i, j)) {
         statusHTML.innerHTML = 'You Lose!';
         gameOver = true;
     } else {
         addNumMinesAround(i, j);
-        if (square.innerHTML === '') { revealSurroundingSquares(i, j); }
+        if (boardHTML.rows[i].cells[j].innerHTML === '') { revealSurroundingSquares(i, j); }
     }
     
 }
@@ -193,7 +185,8 @@ function checkForWinner() {
 }
 
 
-function revealSquare(square) {
+function revealSquare(i, j) {
+    let square = boardHTML.rows[i].cells[j];
     square.classList.remove('hidden');
     square.classList.add('clickedSquare');
 }
@@ -204,7 +197,7 @@ function addNumMinesAround(i, j) {
 }
 
 function numMinesAround(i, j) {
-    return getSurroundingCoords(i, j).filter(elem => isAMine(elem[0], elem[1])).length;
+    return getSurroundingCoords(i, j).filter(e => isAMine(e[0], e[1])).length;
 }
 
 function flagMine() {
@@ -214,7 +207,7 @@ function flagMine() {
 
 function getSurroundingCoords(i, j) {
     let allPossibleCoords = [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j], [i, j+1], [i+1, j-1], [i+1, j], [i+1, j+1]];
-    return allPossibleCoords.filter(elem => 0 <= elem[0] && elem[0] <= BOARD_SIZE - 1 && 0 <= elem[1] && elem[1] <= BOARD_SIZE - 1);
+    return allPossibleCoords.filter(e => 0 <= e[0] && e[0] <= BOARD_SIZE - 1 && 0 <= e[1] && e[1] <= BOARD_SIZE - 1);
 }
 
 function randomInteger(min, max) {
