@@ -1,11 +1,10 @@
 Games Made
-- tic tac toe
 - connect 4
-- wordle (w/out word API)
+- wordle/quordle
 - hangman
 - minesweeper
+- ultimate tic tac toe
 
 Games To Make
-- ultimate tic tac toe
 - snake
 - 2048

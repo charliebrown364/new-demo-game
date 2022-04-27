@@ -28,7 +28,7 @@ body {
 }
 
 .clickedSquare:not(.mine):not(.hidden) {
-    background-color: blue;
+    background-color: tan;
 }
 
 .flag {
