@@ -1,5 +1,5 @@
 const BOARD_SIZE = 10;
-const NUM_MINES = 25;
+const NUM_MINES = 15;
 
 let gameStarted = false;
 let gameOver = false;
