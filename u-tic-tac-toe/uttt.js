@@ -11,6 +11,7 @@ let gameOver = false;
 
 let turn = 'X';
 let correctBoard = null;
+let solvedBoardCoords = [];
 
 document.addEventListener('click', (e) => {
     
@@ -90,8 +91,16 @@ function updateBoard() {
 
     gameStarted = (!gameStarted && !gameOver);
 
-    if ((!correctBoard || listsAreEqual(clickedBoard, correctBoard)) && tile.innerHTML === '') {      
-        
+    let boardIsUnsolved = true;
+
+    for (let solvedBoardCoord of solvedBoardCoords) {
+        if (listsAreEqual(solvedBoardCoord, clickedBoard)) {
+            boardIsUnsolved = false;
+        }
+    }
+
+    if ((!correctBoard || listsAreEqual(clickedBoard, correctBoard)) && tile.innerHTML === '' && boardIsUnsolved) {
+
         tile.innerHTML = turn;
         boardUpdated = true;
 
@@ -143,12 +152,16 @@ function checkForWinner() {
 
     for (let arr of winningOptions) {
         if (arr[0] && arr[0] === arr[1] && arr[1] === arr[2] && arr[0] == arr[2]) {
-            gameOver = true;
-            statusHTML.innerHTML = `${turn} wins!`;
+            solvedBoardCoords.push([...clickedBoard]);
             boardHTML.rows[correctBoard[0]].cells[correctBoard[1]].classList.remove('chosenSmallBoard');
             return;
         }
     }
+
+    // check for 3 boards in a row
+
+    // gameOver = true;
+    // statusHTML.innerHTML = `${turn} wins!`;
 
 }
 

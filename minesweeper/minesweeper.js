@@ -1,18 +1,14 @@
 const BOARD_SIZE = 10;
-const NUM_MINES = 25;
+const NUM_MINES = 15;
 
 let gameStarted = false;
 let gameOver = false;
 
-let clickedSquare = {
-    type: null,
-    x: null,
-    y: null
-};
+let clickType = null;
+let clickX = null;
+let clickY = null;
 
-function startGame() {
-    setInterval(updateUI, 50);
-}
+let startGame = () => setInterval(updateUI, 50);
 
 function updateUI() {
 
@@ -26,24 +22,13 @@ function updateUI() {
 
     if (gameOver) { return; }
 
-    switch (clickedSquare.type) {
-        case null: return;
-        case 'left':
-            if (!gameStarted) {
-                fillBoard();
-            } else {
-                clickSquare(clickedSquare.x, clickedSquare.y);
-            }
-        case 'right': flagMine();
-    }
+    if (clickType === 'left' && !gameStarted) fillBoard();
+    if (clickType === 'left' && gameStarted) clickSquare(clickX, clickY);
+    if (clickType === 'right') flagMine(clickX, clickY);
 
     checkForWinner();
 
-    clickedSquare = {
-        type: null,
-        x: null,
-        y: null
-    };
+    clickType = null;
 
 }
 
@@ -54,7 +39,6 @@ function createBoard() {
         for(let j = 0; j < BOARD_SIZE; j++) {
             let square = row.insertCell();
             square.className = 'square';
-            square.innerHTML = '';
         }
     }
 
@@ -63,16 +47,16 @@ function createBoard() {
 function createEventListeners() {
 
     boardHTML.addEventListener('click', e => {
-        clickedSquare.type = 'left';
-        clickedSquare.x = e.target.parentElement.rowIndex;
-        clickedSquare.y = e.target.cellIndex;
+        clickType = 'left';
+        clickX = e.target.parentElement.rowIndex;
+        clickY = e.target.cellIndex;
     });
 
     boardHTML.addEventListener('contextmenu', e => {
         e.preventDefault();
-        clickedSquare.type = 'right';
-        clickedSquare.x = e.target.parentElement.rowIndex;
-        clickedSquare.y = e.target.cellIndex;
+        clickType = 'right';
+        clickX = e.target.parentElement.rowIndex;
+        clickY = e.target.cellIndex;
     });
 
 }
@@ -86,7 +70,7 @@ function fillBoard() {
     }
 
     placeMinesAndInitialSquares();
-    revealSurroundingSquares(clickedSquare.x, clickedSquare.y);
+    revealSurroundingSquares(clickX, clickY);
 
 }
 
@@ -107,7 +91,7 @@ function placeMinesAndInitialSquares() {
 
             gameStarted = true;
 
-            for (let [i, j] of getSurroundingCoords(clickedSquare.x, clickedSquare.y)) {
+            for (let [i, j] of getSurroundingCoords(clickX, clickY)) {
                 revealSquare(i, j);
             }
 
@@ -153,6 +137,8 @@ function revealSurroundingSquares(x, y) {
 
 function clickSquare(i, j) {
 
+    if (isAFlag(i, j)) return;
+
     revealSquare(i, j);
 
     if (isAMine(i, j)) {
@@ -171,9 +157,7 @@ function checkForWinner() {
 
     for(let i = 0; i < BOARD_SIZE; i++) {
         for(let j = 0; j < BOARD_SIZE; j++) {
-            if (isAClickedSquare(i, j)) {
-                numClickedSquares++;
-            }
+            if (isAClickedSquare(i, j)) numClickedSquares++;
         }
     }
 
@@ -200,9 +184,10 @@ function numMinesAround(i, j) {
     return getSurroundingCoords(i, j).filter(e => isAMine(e[0], e[1])).length;
 }
 
-function flagMine() {
-    let square = boardHTML.rows[clickedSquare.x].cells[clickedSquare.y];
-    square.classList.add('flag');
+function flagMine(i, j) {
+    let square = boardHTML.rows[i].cells[j];
+    if (isAFlag(i, j)) square.classList.remove('flag');
+    else square.classList.add('flag');
 }
 
 function getSurroundingCoords(i, j) {
@@ -218,6 +203,10 @@ function randomInteger(min, max) {
 
 function isAClickedSquare(i, j) {
     return boardHTML.rows[i].cells[j].classList.contains('clickedSquare');
+}
+
+function isAFlag(i, j) {
+    return boardHTML.rows[i].cells[j].classList.contains('flag');
 }
 
 function isAMine(i, j) {
