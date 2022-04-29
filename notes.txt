@@ -4,6 +4,7 @@ Games Made
 - hangman
 - minesweeper
 - ultimate tic tac toe
+- conway's game of life
 
 Games To Make
 - snake

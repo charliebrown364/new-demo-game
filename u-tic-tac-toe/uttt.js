@@ -11,7 +11,9 @@ let gameOver = false;
 
 let turn = 'X';
 let correctBoard = null;
-let solvedBoardCoords = [];
+let solvedBoardCoords = [[null, null, null], [null, null, null], [null, null, null]];
+
+// consider reorganizing game state
 
 document.addEventListener('click', (e) => {
     
@@ -91,30 +93,35 @@ function updateBoard() {
 
     gameStarted = (!gameStarted && !gameOver);
 
-    let boardIsUnsolved = true;
-
-    for (let solvedBoardCoord of solvedBoardCoords) {
-        if (listsAreEqual(solvedBoardCoord, clickedBoard)) {
-            boardIsUnsolved = false;
-        }
-    }
-
-    if ((!correctBoard || listsAreEqual(clickedBoard, correctBoard)) && tile.innerHTML === '' && boardIsUnsolved) {
+    if ((!correctBoard || listsAreEqual(clickedBoard, correctBoard)) && tile.innerHTML === '' && !listIncludes(solvedBoardCoords, clickedBoard)) {
 
         tile.innerHTML = turn;
         boardUpdated = true;
 
-        correctBoard = [...clickedCell];
+        if (listIncludes(solvedBoardCoords, clickedBoard)) {
+            
+            correctBoard = null;
 
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-
-                if (i === correctBoard[0] && j === correctBoard[1]) {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
                     boardHTML.rows[i].cells[j].classList.add('chosenSmallBoard');
-                } else {
-                    boardHTML.rows[i].cells[j].classList.remove('chosenSmallBoard');
                 }
+            }
 
+        } else {
+            
+            correctBoard = [...clickedCell];
+
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+
+                    if (i === correctBoard[0] && j === correctBoard[1]) {
+                        boardHTML.rows[i].cells[j].classList.add('chosenSmallBoard');
+                    } else {
+                        boardHTML.rows[i].cells[j].classList.remove('chosenSmallBoard');
+                    }
+
+                }
             }
         }
 
@@ -134,34 +141,38 @@ function checkForWinner() {
     let tiles = [];
 
     for(let row of board.rows) {
+        let rowInnerHTML = [];
         for(let cell of row.cells) {
-            tiles.push(cell.innerHTML);
+            rowInnerHTML.push(cell.innerHTML);
         }
+        tiles.push(rowInnerHTML);
     }
 
-    let winningOptions = [
-        [tiles[0], tiles[1], tiles[2]],
-        [tiles[3], tiles[4], tiles[5]],
-        [tiles[6], tiles[7], tiles[8]],
-        [tiles[0], tiles[3], tiles[6]],
-        [tiles[1], tiles[4], tiles[7]],
-        [tiles[2], tiles[5], tiles[8]],
-        [tiles[0], tiles[4], tiles[8]],
-        [tiles[2], tiles[4], tiles[6]],
+    let getWinningOptions = (l) => [
+        [l[0][0], l[0][1], l[0][2]],
+        [l[1][0], l[1][1], l[1][2]],
+        [l[2][0], l[2][1], l[2][2]],
+        [l[0][0], l[1][0], l[2][0]],
+        [l[0][1], l[1][1], l[2][1]],
+        [l[0][2], l[1][2], l[2][2]],
+        [l[0][0], l[1][1], l[2][2]],
+        [l[0][2], l[1][1], l[2][0]],
     ];
 
-    for (let arr of winningOptions) {
-        if (arr[0] && arr[0] === arr[1] && arr[1] === arr[2] && arr[0] == arr[2]) {
-            solvedBoardCoords.push([...clickedBoard]);
-            boardHTML.rows[correctBoard[0]].cells[correctBoard[1]].classList.remove('chosenSmallBoard');
-            return;
+    for (let three of getWinningOptions(tiles)) {
+        if (three[0] && three[0] === three[1] && three[1] === three[2] && three[0] === three[2]) {
+            solvedBoardCoords[clickedBoard[0]][clickedBoard[1]] = turn;
+            break;
         }
     }
 
-    // check for 3 boards in a row
-
-    // gameOver = true;
-    // statusHTML.innerHTML = `${turn} wins!`;
+    for (let three of getWinningOptions(solvedBoardCoords)) {
+        if (three[0] && three[0] === three[1] && three[1] === three[2] && three[0] === three[2]) {
+            gameOver = true;
+            statusHTML.innerHTML = `${turn} wins!`;
+            break;
+        }
+    }
 
 }
 
@@ -171,4 +182,12 @@ function listsAreEqual(list1, list2) {
         if (list1[i] !== list2[i]) return false;
     }
     return true;
+}
+
+function listIncludes(parentList, sublist) {
+    for (let parentElem of parentList) {
+        if (listsAreEqual(parentElem, sublist)) {
+            return true;
+        }
+    }
 }
