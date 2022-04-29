@@ -1,6 +1,5 @@
 let boardHTML;
 let turnHTML;
-let correctBoardHTML;
 let statusHTML;
 
 let clickedBoard = null;
@@ -33,10 +32,9 @@ function startGame() {
 
 function updateUI() {
 
-    boardHTML        = document.getElementById("board");
-    turnHTML         = document.getElementById("turn");
-    correctBoardHTML = document.getElementById("correctBoard");
-    statusHTML       = document.getElementById("status");
+    boardHTML  = document.getElementById("board");
+    turnHTML   = document.getElementById("turn");
+    statusHTML = document.getElementById("status");
 
     if (boardHTML.rows.length === 0) { createBoard(); }
     if (gameOver) return;
@@ -98,7 +96,6 @@ function updateBoard() {
         boardUpdated = true;
 
         correctBoard = [...clickedCell];
-        correctBoardHTML.innerHTML = `correct board: [${correctBoard[0]}, ${correctBoard[1]}]`;
 
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {

@@ -1,0 +1,16 @@
+body {
+    background-color: lightblue;
+}
+
+.alive, .dead {
+    width: 5px;
+    height: 5px;
+}
+
+.alive {
+    background-color: black;
+}
+
+.dead {
+    background-color: white;
+}
