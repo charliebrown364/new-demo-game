@@ -1,0 +1,33 @@
+body {
+    background-color: lightblue;
+}
+
+#title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#status {
+    position: absolute;
+    left: 900px;
+    top: 50px;
+}
+
+.square {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    background-color: white;
+}
+
+.snake {
+    background-color: green;
+}
+
+.snakeHead {
+    background-color: black;
+}
+
+.apple {
+    background-color: red;
+}

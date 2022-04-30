@@ -5,7 +5,7 @@ Games Made
 - minesweeper
 - ultimate tic tac toe
 - conway's game of life
+- snake
 
 Games To Make
-- snake
 - 2048
