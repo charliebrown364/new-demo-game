@@ -2,27 +2,32 @@ let boardHTML  = document.getElementById("board");
 let statusHTML = document.getElementById("status");
 let scoreHTML  = document.getElementById("score");
 
-const BOARD_SIZE = 15;
+const BOARD_SIZE = 20;
+const UPDATE_TIME = 100;
 
-let gameStarted = false;
-let gameOver = false;
+let gameStarted;
+let gameOver;
+let score;
+let directions;
+let snakeCoords;
+let appleCoord;
+let keepSnakeTail;
 
-let score = 0;
-let currentDirection = 'right';
-
-let snakeCoords = [[2, 1], [2, 2], [2, 3]];
-let appleCoord = [6, 7];
-let keepSnakeTail = false;
+resetGame();
 
 document.addEventListener("click", (e) => gameStarted = true);
 
 document.addEventListener("keydown", (e) => {
     let letter = e.code.replace('Key', '');
-    if (letter === 'W' || letter === 'A' || letter === 'S' || letter === 'D') changeDirection(letter);
     if (['W', 'A', 'S', 'D', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'ArrowRight'].includes(letter)) changeDirection(letter);
+    if (letter === 'Enter') {
+        resetGame();
+        updateSnakeHTML();
+        updateAppleHTML();
+    }
 });
 
-let startGame = () => setInterval(updateUI, 100);
+let startGame = () => setInterval(updateUI, UPDATE_TIME);
 
 function updateUI() {
 
@@ -61,11 +66,33 @@ function createBoard() {
     }
 }
 
+function resetGame() {
+
+    if (gameOver) {
+        boardHTML.rows[appleCoord[0]].cells[appleCoord[1]].classList.remove('apple');
+        statusHTML.innerHTML = '';
+        scoreHTML.innerHTML = 'score: 0';
+    }
+
+    gameStarted = false;
+    gameOver = false;
+
+    score = 0;
+
+    directions = ['right'];
+
+    snakeCoords = [[5, 1], [5, 2], [5, 3]];
+    keepSnakeTail = false;
+
+    appleCoord = [5, 8];
+
+}
+
 function changeDirection(letter) {
-    if ((letter === 'W' || letter === 'ArrowUp')    && currentDirection !== 'down')  currentDirection = 'up';
-    if ((letter === 'A' || letter === 'ArrowLeft')  && currentDirection !== 'right') currentDirection = 'left';
-    if ((letter === 'S' || letter === 'ArrowDown')  && currentDirection !== 'up')    currentDirection = 'down';
-    if ((letter === 'D' || letter === 'ArrowRight') && currentDirection !== 'left')  currentDirection = 'right';
+    if ((letter === 'W' || letter === 'ArrowUp')    && directions.at(-1) !== 'down')  directions.push('up');
+    if ((letter === 'A' || letter === 'ArrowLeft')  && directions.at(-1) !== 'right') directions.push('left');
+    if ((letter === 'S' || letter === 'ArrowDown')  && directions.at(-1) !== 'up')    directions.push('down');
+    if ((letter === 'D' || letter === 'ArrowRight') && directions.at(-1) !== 'left')  directions.push('right');
 }
 
 function updateSnakeCoords() {
@@ -82,12 +109,20 @@ function updateSnakeCoords() {
         'left':  [y, x - 1],
         'right': [y, x + 1]
     }
-
+    
     for (let [direction, newCoords] of Object.entries(directionMap)) {
-        if (currentDirection === direction) {
+        if (direction === directions[0]) {
+
+            if (directions.length !== 1) directions.splice(0, 1);
+
             if (listIncludes(snakeCoords, newCoords)) gameIsOver();
             else if (newCoords[0] < 0 || newCoords[0] >= BOARD_SIZE || newCoords[1] < 0 || newCoords[1] >= BOARD_SIZE) gameIsOver();
             else snakeCoords.push(newCoords);
+            
+            // statusHTML.innerHTML = `directions: ${directions}<br>`;
+            // if (directions.length !== 1) directions.splice(0, 1);
+            // statusHTML.innerHTML += `directions: ${directions}<br>`;
+
         }
     }
 
